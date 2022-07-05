@@ -125,7 +125,7 @@ double lagrangian (double *HP, double *HR, double *PP, double *PR,double *FP, do
       gap = model.get(GRB_DoubleAttr_MIPGap);
 
       for(int i=0 ; i < N; i++){
-        sgv[i] = -C + xp[i].get(GRB_DoubleAttr_X) + xr[i].get(GRB_DoubleAttr_X);
+        sgv[i] = C - xp[i].get(GRB_DoubleAttr_X) - xr[i].get(GRB_DoubleAttr_X);
       }
 
 
