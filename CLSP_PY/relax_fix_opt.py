@@ -91,12 +91,12 @@ def main():
     ######################################################################
 
 
-    def gera_particoes(N,tamanho_particao=3):
+    def gera_particoes(N,tamanho_particao=10):
         subset = []
 
         tam_subset = tamanho_particao
 
-        for i in range(0,N,tam_subset):
+        for i in range(0,N,tam_subset-1):
             if i + tam_subset > N:
                 subset.append([k for k in range(i,N)])
             else:
@@ -164,7 +164,7 @@ def main():
             model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
 
             
-            model.write(file_name+".lp")
+            #model.write(file_name+".lp")
 
             # Parameters 
             model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
@@ -219,15 +219,16 @@ def main():
 
 
 
-    def fix_and_optimize(particoes,yp_sol ,yr_sol):
+    def fix_and_optimize(particoes,yp_sol ,yr_sol,num_subset):
 
         indices = []
+        #indices = particoes.copy()
 
-        if len(particoes) == 1 :
+        if num_subset == 1 :
             indices = particoes.copy()
         else :
             for  i in range(len(particoes)):
-                for j in range(len(particoes[i])):
+               for j in range(len(particoes[i])):
                     indices.append(j)
         try:
 
@@ -269,7 +270,7 @@ def main():
             model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
             model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
             model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
-            model.write(file_name+"_model.lp")
+           # model.write(file_name+"_model.lp")
 
             # Parameters 
             model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
@@ -309,13 +310,13 @@ def main():
 
 
 
-    def heuristic():
+    def heuristic(subset,yp_sol,yr_sol):
     
         for particao in subset:
-            obj,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = relax_fix(particao,yp_sol,yr_sol)
+            obj,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol,bestbound, numnode, gap = relax_fix(particao,yp_sol,yr_sol)
         
         for particao in subset:
-            obj,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = fix_and_optimize(particao,yp_sol,yr_sol)
+            obj,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = fix_and_optimize(particao,yp_sol,yr_sol,1)
         
         obj_    = obj
         xp_sol_ = xp_sol.copy()
@@ -327,19 +328,27 @@ def main():
 
 
         
-        for cont in range(30):
-            part_sort = rd.randint(0,len(subset)-1)
+        for cont in range(100):
+            tam_p = rd.randint(2,10)
+            subset = gera_particoes(N,tam_p)
+            for particao in subset:
+                obj_,xp_sol_,xr_sol_,sp_sol_,sr_sol_, yp_sol_,yr_sol_ = fix_and_optimize(particao,yp_sol_,yr_sol_,1)
+            
+            for i in range(20):
+         
+                num_sub = rd.randint(3,int(len(subset))-1)
+                ind_sub = rd.sample(range(0,len(subset)),num_sub)
+                sele_sub = [subset[sub] for sub in list(set(ind_sub))] 
 
-            obj_,xp_sol_,xr_sol_,sp_sol_,sr_sol_, yp_sol_,yr_sol_ = fix_and_optimize(subset[part_sort],yp_sol_,yr_sol_)
+                obj_,xp_sol_,xr_sol_,sp_sol_,sr_sol_, yp_sol_,yr_sol_ = fix_and_optimize(sele_sub,yp_sol_,yr_sol_,num_sub)
 
-            if obj_ < obj :
-                obj = obj_
-                xp_sol = xp_sol_.copy()
-                xr_sol = xr_sol_.copy()
-                sp_sol = sp_sol_.copy()
-                sr_sol = sr_sol_.copy()
-                yp_sol = yp_sol_.copy()
-                yr_sol = yr_sol_.copy()
+                if  obj_ < obj :
+                    obj = obj_
+                    xp_sol = xp_sol_.copy()
+                    xr_sol = xr_sol_.copy()
+                    sr_sol = sr_sol_.copy()
+                    yp_sol = yp_sol_.copy()
+                    yr_sol = yr_sol_.copy()
         
 
         return obj,xp_sol,xr_sol, sp_sol,sr_sol, yp_sol,yr_sol
@@ -354,13 +363,17 @@ def main():
 
 
 
-	#obj,xp_sol,xr_sol, sp_sol,sr_sol, yp_sol,yr_sol = heuristic()
-    for particao in subset:
-            obj,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol,bestbound,numnode, gap = relax_fix(particao,yp_sol,yr_sol)
+    obj,xp_sol,xr_sol, sp_sol,sr_sol, yp_sol,yr_sol = heuristic(subset,yp_sol,yr_sol)
+   # for particao in subset:
+    #        obj,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol,bestbound,numnode, gap = relax_fix(particao,yp_sol,yr_sol)
 
+    #for particao in subset:
+     #   obj,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = fix_and_optimize(particao,yp_sol,yr_sol)
+        
 
-    arquivo = open('relax_fix_'+file_name,'a')
-    arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(bestbound,3))+';'+str(round(numnode,3))+';'+str(round(gap,3)))
+    print("FO: ",obj)
+    arquivo = open('relax_fix_fix_opt_table'+str(fator)+'.txt','a')
+    arquivo.write(file_name+';'+str(round(obj,3))+'\n')
     arquivo.close()
 
 
