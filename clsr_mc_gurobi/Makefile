@@ -1,9 +1,9 @@
 # Copyright 2020, Gurobi Optimization, LLC
 
 PLATFORM = linux64
-INC      = /opt/gurobi951/linux64/include/
-CLIB     = -L/opt/gurobi951/linux64/lib -lgurobi95
-CPPLIB   = -L/opt/gurobi951/linux64/lib -lgurobi_c++ $(CLIB)
+INC      = /opt/gurobi952/linux64/include/
+CLIB     = -L/opt/gurobi952/linux64/lib -lgurobi95
+CPPLIB   = -L/opt/gurobi952/linux64/lib -lgurobi_c++ $(CLIB)
 
 
 

@@ -86,9 +86,9 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
       model.addConstr(ctr >= D[i]);  
     }
     
-    /*
+    
       for (int i=0; i<N; i++) {
-      IloExpr ctr(env);
+      //IloExpr ctr(env);
       for (int j=0 ; j<=i; j++) {
       for (int k=j; k<N; k++) {
       ctr += wr[j][k];
@@ -96,7 +96,7 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
       }
       model.add(ctr <= SR[0][i]);
       }
-    */
+    
     
     for (int i=0; i<N; i++) {
       for (int j=i; j<N; j++) {
@@ -106,14 +106,31 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
 	model.addConstr(ctr <= 0);	
       }
     }
+
+    for (int i = 0 ; i <N; i++){
+      for (int j = i ; j  < N ; j++){
+        model.addConstr(wp[i][j] <= D[j]*yp[i]);
+      }
+    }
     
-    for(int i=0; i < N; i++){
+ /*   for(int i=0; i < N; i++){
       ctr = 0;
       for(int j=i; j < N; j++){
 	ctr += wp[i][j];
       }
       model.addConstr(ctr <= Cap * yp[i]);
+    }*/
+
+/*    for(int i=1; i < N; i++){
+      ctr = 0;
+      for(int j=0; j < i; j++){
+  ctr += wp[j][i];
+      }
+      model.addConstr(ctr <= D[i]);
     }
+
+
+
     
     for (int i=0; i<N; i++) {
       for (int j=i; j<N; j++) {
@@ -122,7 +139,7 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
 	ctr += yr[i]*(-min(SR[0][i], D[j]));
 	model.addConstr(ctr <= 0);
       }
-    }
+    }*/
     
     for (int i=0; i<N; i++) {
       ctr = 0;
@@ -141,6 +158,20 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
       }
       model.addConstr(ctr == 0);
     }
+
+    for (int i =0 ; i < N; i++){
+
+      model.addConstr(xp[i]+xr[i] <= Cap);
+    }
+
+
+/*      for (int i=0; i < N; i++){
+
+      model.addConstr(xp[i] <= min(Cap,SD[i][N-1])*yp[i]);
+    }
+  for (int i=0; i < N; i++){
+      model.addConstr(xr[i] <= min(SR[0][i],SD[i][N-1])*yr[i]);
+    }*/
     
     for (int i=0; i<N; i++) {
       for (int j=i; j<N; j++)	{
@@ -187,9 +218,9 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
     
     model.set(GRB_DoubleParam_TimeLimit, MAX_CPU_TIME);
     model.set(GRB_DoubleParam_MIPGap, EPSILON);
-    model.set(GRB_IntParam_Threads, 1);
-    model.set(GRB_IntParam_Cuts, -1);
-    model.set(GRB_IntParam_Presolve, -1);
+    model.set(GRB_IntParam_Threads, 3);
+    model.set(GRB_IntParam_Cuts, 3);
+    model.set(GRB_IntParam_Presolve, 1);
     
     /*solve the problem*/
 
