@@ -3,6 +3,9 @@ from pathlib import Path
 import os
 import leitura as ler
 import optimization as opt
+import relax_fix as rf
+import fix_optimize as fop
+import gera_particoes as gera
 import numpy as np
 import pandas as pd
 import sys
@@ -17,6 +20,7 @@ from datetime import datetime, date
 
 file_name = sys.argv[1]
 
+USE_FOP = True # Se usa o fix and optimize
 
 
 #######################################################################
@@ -66,6 +70,8 @@ def main():
 	sr_sol = [0]*N
 	yp_sol = [0]*N
 	yr_sol = [0]*N
+	rf_yp_sol = [0]*N
+	rf_yr_sol = [0]*N
 
 
 
@@ -85,12 +91,15 @@ def main():
 	fator = 1.5
 	#Capacidade de cada período
 	C = (soma * fator)/N
-
-    
 	
+	subset = gera.gera_particoes(N)
+	for conj in subset:
+		rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 
 
-	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,\
+	sr_sol, yp_sol,yr_sol = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,
+										rf_yp_sol,rf_yr_sol)
 
 
 

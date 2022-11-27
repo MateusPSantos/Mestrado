@@ -1,8 +1,7 @@
 
-
 def gera_particoes(N,semente = 42,tamanho_particao=3,indice_geracao = 1):
 	subset = []
-     
+	 
 	if indice_geracao == 1:
 		for i in range(0,N,tamanho_particao):
 			if i + tamanho_particao > N:
@@ -15,9 +14,9 @@ def gera_particoes(N,semente = 42,tamanho_particao=3,indice_geracao = 1):
 		random.seed(semente)
 		lista_periodos = [k  for k in range(N)]
 		while True:
-             
+			 
 			sub_conj = []
-             
+			 
 			if len(lista_periodos) >= tamanho_particao:
 				sub_conj = sample(lista_periodos,tamanho_particao)
 			else:

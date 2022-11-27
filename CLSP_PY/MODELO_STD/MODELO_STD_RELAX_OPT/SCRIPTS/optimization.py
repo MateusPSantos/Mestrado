@@ -21,7 +21,17 @@ cap = True
 ######################################################################
 
 
-def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
+def clsr_std(xp_sol,xr_sol,sp_sol,sr_sol,yp_sol ,yr_sol):
+
+	#indices = []
+   
+
+	#if len(particoes) == 1 :
+	#    indices = particoes.copy()
+	#else :
+	#    for  i in range(len(particoes)):
+	 #       for j in range(len(particoes[i])):
+	  #          indices.append(j)
 	try:
 
 		# Create a new model
@@ -36,7 +46,14 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yr")
 		sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
 
-
+	  
+		for i in range(N):
+			xp[i].start = xp_sol[i]
+			xr[i].start = xr_sol[i]
+			sp[i].start = sp_sol[i]
+			sr[i].start = sr_sol[i]
+			yp[i].start = yp_sol[i]
+			yr[i].start = yr_sol[i]
 		
 		model.update()
 		# # Set objective
@@ -45,6 +62,7 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		# # Add constraints
 	
 		model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
+
 		model.addConstrs(sp[i-1] + xp[i] + xr[i] - sp[i] == D[i] for i in range(N) if i > 0 )
 		model.addConstr(R[0] - xr[0] - sr[0] == 0)
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
@@ -56,9 +74,9 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		model.setParam(GRB.Param.Threads,3)
+		model.setParam(GRB.Param.Cuts, 3)
+		model.setParam(GRB.Param.Presolve,2)
 
 
 
@@ -79,6 +97,30 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
+
+	return model.ObjVal, xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	return model.ObjVal, model.ObjBound,model.MIPGap,model.Runtime, model.NodeCount, \
 				xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol

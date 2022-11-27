@@ -3,6 +3,10 @@ import gurobipy as gp
 from gurobipy import GRB
 
 
+MAX_CPU_TIME = 3600.0
+EPSILON = 0.000001
+
+
 def fix_and_optimize(particoes,yp_sol ,yr_sol,num_subset):
 
     indices = []
