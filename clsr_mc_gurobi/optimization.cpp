@@ -86,9 +86,9 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
       model.addConstr(ctr >= D[i]);  
     }
     
-    
+    /*
       for (int i=0; i<N; i++) {
-      //IloExpr ctr(env);
+      IloExpr ctr(env);
       for (int j=0 ; j<=i; j++) {
       for (int k=j; k<N; k++) {
       ctr += wr[j][k];
@@ -96,7 +96,7 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
       }
       model.add(ctr <= SR[0][i]);
       }
-    
+    */
     
     for (int i=0; i<N; i++) {
       for (int j=i; j<N; j++) {
