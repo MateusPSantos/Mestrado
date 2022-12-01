@@ -38,7 +38,7 @@ def main():
 
 
 
-	N, PP, PR, FP, FR, HR, HP, D, R = ler.leitura_instance(file_name)
+	N, PP, PR, FP, FR, HR, HP, D, R = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
 
 
 	SD = (np.zeros((N,N))).tolist()

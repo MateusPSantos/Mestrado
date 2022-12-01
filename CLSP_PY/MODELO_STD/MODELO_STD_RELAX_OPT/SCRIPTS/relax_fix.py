@@ -9,6 +9,20 @@ EPSILON = 0.000001
 
 
 def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
+
+	xp_sol1 = [0]*N
+	xr_sol1 = [0]*N
+	sp_sol1 = [0]*N
+	sr_sol1 = [0]*N
+	yp_sol1 = [0]*N
+	yr_sol1 = [0]*N
+
+	objval = 0.0
+	bestbound = 0.0
+	numnode = 0.0
+	elapsed = 0.0
+	gap = 0.0
+
 	try:
 
 		# Create a new model
@@ -79,12 +93,7 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		elapsed = model.Runtimẹ
 		gap = model.MIPGap
 
-		xp_sol1 = [0]*N
-		xr_sol1 = [0]*N
-		sp_sol1 = [0]*N
-		sr_sol1 = [0]*N
-		yp_sol1 = [0]*N
-		yr_sol1 = [0]*N
+
 		
 	
 		xp_sol1 = [xp[i].X for i in range(N)]

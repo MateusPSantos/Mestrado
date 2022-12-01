@@ -22,22 +22,45 @@ cap = True
 ######################################################################
 
 
-def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
+def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 
-	CSP = (np.zeros((N,N))).tolist()
-	CSR = (np.zeros((N,N))).tolist()
-	CR = (np.zeros((N,N))).tolist()
-	CL = [0]*N
+	CP = [0]*N
+	CR = [0]*N
+	rrl = [0]*N
+	dl = [0]*N
+	sdl = (np.zeros(N,N)).tolist()
+	KP = 0
+	KR = 0 
 
 	for i in range(N):
+		CP[i] = PP[i]
+
 		for j in range(i,N):
-			CR[i][j]  = sum(HR[t]*SR[i][t] for t in range(i,j))
-			CSP[i][j] = PP[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
-			CSR[i][j] = PR[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
+			CP[i] = CP[i] + HP[j]
+
+	for l in range(0,N):
+		if l < 1:
+			rrl[l] = R[l]
+		else:
+			rrl[l] = R[l] + max(0.0, rrl[l-1]-D[l-1])
+
+		dl[l] = max(0.0,D[l]-rrl[l])
+
+	for k in range(0,N):
+		sdl[k][k] = dl[k]
+		for j in range(k+1,N):
+			sdl[k][j] = sdl[k][j-1] + dl[j]
 
 	for i in range(N):
-		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
+		CR[i] = PR[i]
+		for j in range(i,N):
+			CR[i] += HP[j]
+		for j in range(i,N):
+			CR[i] -= HR[j]
+
+
+	
 	
 
 

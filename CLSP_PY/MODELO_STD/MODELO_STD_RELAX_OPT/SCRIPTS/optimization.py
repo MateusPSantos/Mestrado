@@ -21,17 +21,8 @@ cap = True
 ######################################################################
 
 
-def clsr_std(xp_sol,xr_sol,sp_sol,sr_sol,yp_sol ,yr_sol):
+def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_sol,yp_sol ,yr_sol):
 
-	#indices = []
-   
-
-	#if len(particoes) == 1 :
-	#    indices = particoes.copy()
-	#else :
-	#    for  i in range(len(particoes)):
-	 #       for j in range(len(particoes[i])):
-	  #          indices.append(j)
 	try:
 
 		# Create a new model

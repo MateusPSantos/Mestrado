@@ -70,6 +70,12 @@ def main():
 	sr_sol = [0]*N
 	yp_sol = [0]*N
 	yr_sol = [0]*N
+	rf_xp_sol = [0]*N
+	rf_xr_sol = [0]*N
+	rf_sp_sol = [0]*N
+	rf_sr_sol = [0]*N
+	rf_yp_sol = [0]*N
+	rf_yr_sol = [0]*N
 	rf_yp_sol = [0]*N
 	rf_yr_sol = [0]*N
 
@@ -93,13 +99,13 @@ def main():
 	C = (soma * fator)/N
 	
 	subset = gera.gera_particoes(N)
+	print(subset)
 	for conj in subset:
 		rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+		print(rf_yp_sol)
 
 
-	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,\
-	sr_sol, yp_sol,yr_sol = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,
-										rf_yp_sol,rf_yr_sol)
+	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol)
 
 
 
