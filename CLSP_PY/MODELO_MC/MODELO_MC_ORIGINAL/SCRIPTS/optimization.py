@@ -59,6 +59,24 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		for j in range(i,N):
 			CR[i] -= HR[j]
 
+	
+
+	for i in range(N):
+		AUX = 0 
+		for j in range(i+1):
+			AUX += D[j]
+
+		KP += HP[i]*AUX
+
+	for i in range(N):
+		AUX = 0
+
+		for j in range(i+1):
+			AUX += R[j]
+
+		KR += HR[i]*AUX
+
+	K = KR - KP
 
 	
 	
@@ -71,19 +89,20 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		# Create variables
 		
-		zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
-		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
-		zr  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
-		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
+		wp   = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wp")
+		wr 	 = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wr")
+		vor  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="vor")
+		xp    = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xp")
+		xr    = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
 		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
 		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
 
 
 		# # Set objective
 		FO = None
-		for i in range(N):
-			FO += yp[i]*FP[i] + yr[i]*FR[i] + l[i]*CL[i] + gp.quicksum(zsp[i,j]*CSP[i][j] + zsr[i,j]*CSR[i][j]+
-																	   zr[i,j]*CR[i][j] for j in range(i,N))
+		FO = gp.quicksum(xp[i]*CP[i] for i in range(N)) + gp.quicksum(yp[i]*FP[i] for i in range(N)) \
+			+ gp.quicksum(xr[i]*CR[i] for i in range(N)) + gp.quicksum(yr[i]*FR[i] for i in range(N)) + K
+
 
 		
 		model.setObjective(FO, sense = GRB.MINIMIZE)
