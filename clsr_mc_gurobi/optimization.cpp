@@ -9,7 +9,7 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
   double fator;
   double Cap;
   
-  lsdbar = 0;
+  lsdbar = 1;
   cap = true;
   
   soma = 0;
