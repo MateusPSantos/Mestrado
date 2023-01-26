@@ -98,14 +98,14 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
       }
     */
     
-    for (int i=0; i<N; i++) {
+    /*for (int i=0; i<N; i++) {
       for (int j=i; j<N; j++) {
 	ctr = 0;
 	ctr += wp[i][j]; 
 	ctr += yp[i]*(-D[j]);
 	model.addConstr(ctr <= 0);	
       }
-    }
+    }*/
 
     for (int i = 0 ; i <N; i++){
       for (int j = i ; j  < N ; j++){

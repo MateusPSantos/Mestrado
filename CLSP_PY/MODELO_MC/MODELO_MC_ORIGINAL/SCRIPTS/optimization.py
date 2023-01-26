@@ -13,7 +13,7 @@ MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 cap = True
 
-
+lsdbar = 1
 
 
 
@@ -99,11 +99,25 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 
 		# # Set objective
-		FO = None
-		FO = gp.quicksum(xp[i]*CP[i] for i in range(N)) + gp.quicksum(yp[i]*FP[i] for i in range(N)) \
-			+ gp.quicksum(xr[i]*CR[i] for i in range(N)) + gp.quicksum(yr[i]*FR[i] for i in range(N)) + K
+		FO = 0.0
+		#FO = gp.quicksum(xp[i]*CP[i] for i in range(N)) + gp.quicksum(yp[i]*FP[i] for i in range(N)) \
+		#	+ gp.quicksum(xr[i]*CR[i] for i in range(N)) + gp.quicksum(yr[i]*FR[i] for i in range(N)) + K
+		
+		
 
+		for i in range(N):
+			FO+= xp[i]*CP[i]
 
+		for i in range(N):
+			FO+= yp[i]*FP[i]
+
+		for i in range(N):
+			FO+= xr[i]*CR[i]
+
+		for i in range(N):
+			FO+= yr[i]*FR[i]
+
+		FO+= K
 		
 		model.setObjective(FO, sense = GRB.MINIMIZE)
 
@@ -111,37 +125,49 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		# # Add constraints
 
+
+
+
+
+
 		model.addConstrs(gp.quicksum(wp[j,i]+wr[j,i] for j in range(i+1)) >= D[i] for i in range(N))
-
-
-		model.addConstrs(wp[i,j] <= yp[i]*D[j] for i in range(N) for j in range(i,N))
-
-
-		model.addConstrs(xp[i]+ gp.quicksum((-wr[i,j]) for j in range(i,N)) == 0 for i in range(N))
-
-		model.addConstrs(xp[i]+xr[i] <= C for i in range(N))
-
-
-		model.addConstrs(gp.quicksum(vor[i,j] + yr[j]*(-R[i])for j in range(i,N)) <= 0 for i in range(N))
-
-		model.addConstrs(gp.quicksum(vor[i,j] for j in range(i,N)) <= R[i] for i in range(N))
 
 		model.addConstrs(gp.quicksum(vor[j,i] for j in range(i+1)) + gp.quicksum((-wr[i,j]) for j in range(i,N))
 									>= 0 for i in range(N)
 									)
 
+		model.addConstrs(gp.quicksum(vor[i,j] for j in range(i,N)) <= R[i] for i in range(N))
 
 
 
-		
+		model.addConstrs(wp[i,j] <= yp[i]*D[j]  for i in range(N) for j in range(i,N) )
+
+
+		model.addConstrs(wr[i,j] <= min(SR[0][i],D[i])  for j in range(i,N) for i in range(N) )
+
+		model.addConstrs(gp.quicksum(vor[i,j] + yr[j]*(-R[i])for j in range(i,N) ) <= 0  for i in range(N))
+
+
+		model.addConstrs(xp[i]+ gp.quicksum((-wp[i,j]) for j in range(i,N)) == 0 for i in range(N))
+
+		model.addConstrs(xr[i]+ gp.quicksum((-wr[i,j]) for j in range(i,N)) == 0 for i in range(N))
+
+		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
+
+		model.addConstrs(xp[i]+xr[i] <= C for i in range(N))
+
+		if lsdbar == 1:
+			model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
+
 	 
 
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads,1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		model.setParam(GRB.Param.Cuts, 1)
+		model.setParam(GRB.Param.Presolve,1)
 
 
 
