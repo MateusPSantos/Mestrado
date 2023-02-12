@@ -90,7 +90,7 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		objval = model.ObjVal
 		bestbound = model.ObjBound
 		numnode = model.NodeCount
-		elapsed = model.Runtimẹ
+		elapsed = model.Runtime
 		gap = model.MIPGap
 
 
@@ -103,14 +103,11 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		yp_sol1 = [yp[i].X for i in range(N)]
 		yr_sol1 = [yr[i].X for i in range(N)]
 
-		for i in range(N):
-			print(xp[i].X)
-		print('Obj: %g' % model.ObjVal)
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
-	except AttributeError:
-		print('Encountered an attribute error')
+	#except AttributeError:
+	#	print('Encountered an attribute error')
 
 	return model.ObjVal, xp_sol1,xr_sol1,sp_sol1,sr_sol1, yp_sol1,yr_sol1, bestbound, numnode, gap,elapsed

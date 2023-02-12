@@ -4,7 +4,7 @@ import os
 import leitura as ler
 import optimization as opt
 import relax_fix as rf
-import fix_optimize as fop
+#import fix_optimize as fop
 import gera_particoes as gera
 import numpy as np
 import pandas as pd

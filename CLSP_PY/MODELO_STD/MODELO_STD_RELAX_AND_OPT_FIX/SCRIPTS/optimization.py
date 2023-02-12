@@ -58,7 +58,7 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		model.addConstr(R[0] - xr[0] - sr[0] == 0)
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1],C) <= 0 for i in range(N))
 		model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
 	   # model.write(file_name+"_model.lp")
 
@@ -66,8 +66,8 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, 3)
-		model.setParam(GRB.Param.Presolve,2)
+		model.setParam(GRB.Param.Cuts, -1)
+		model.setParam(GRB.Param.Presolve,-1)
 
 
 
@@ -88,30 +88,6 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
-
-	return model.ObjVal, xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	return model.ObjVal, model.ObjBound,model.MIPGap,model.Runtime, model.NodeCount, \
 				xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol
