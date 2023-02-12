@@ -95,6 +95,8 @@ def main():
 			
 	soma = sum(D)
 	fator = 1.5
+
+	#tamanho_janela = 5
 	#Capacidade de cada período
 	C = (soma * fator)/N
 	

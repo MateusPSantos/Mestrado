@@ -1,9 +1,10 @@
 
-def gera_particoes(N,semente = 5,tamanho_particao=2,indice_geracao = 1):
+def gera_particoes(N,tamanho_particao=5,num_par_fix=2,semente = 5,indice_geracao = 1):
+	tam_jane = tamanho_particao - num_par_fix
 	subset = []
 	 
 	if indice_geracao == 1:
-		for i in range(0,N,tamanho_particao):
+		for i in range(0,N,tam_jane):
 			if i + tamanho_particao > N:
 				subset.append([k for k in range(i,N)])
 			else:
