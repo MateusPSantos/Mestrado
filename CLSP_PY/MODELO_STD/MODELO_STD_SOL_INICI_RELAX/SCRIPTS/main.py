@@ -20,6 +20,9 @@ from datetime import datetime, date
 
 file_name = sys.argv[1]
 
+fator = 1.5
+
+
 USE_FOP = True # Se usa o fix and optimize
 
 
@@ -94,7 +97,7 @@ def main():
 
 			
 	soma = sum(D)
-	fator = 1.5
+	
 
 	#tamanho_janela = 5
 	#Capacidade de cada período
@@ -102,8 +105,9 @@ def main():
 	
 	subset = gera.gera_particoes(N)
 	print(subset)
-	for conj in subset:
-		rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+	#for conj in subset:
+	for i in range(len(subset)-1):
+		rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(subset,i,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,opc=2)
 		
 
 

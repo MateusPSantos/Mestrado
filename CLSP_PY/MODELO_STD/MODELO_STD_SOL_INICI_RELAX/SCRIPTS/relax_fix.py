@@ -8,7 +8,21 @@ MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 
 
-def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
+def relax_fix(particoes,ind_parti,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,opc=1):
+
+	sub_set_prod = []
+	sub_set_rema = []
+
+
+	if opc != 1:
+		if ind_parti < N :
+			sub_set_prod = particoes[ind_parti]
+
+		if ind_parti > 0 :
+			sub_set_rema = [valor - 2 for valor in particoes[ind_parti]]
+
+
+	
 
 	xp_sol1 = [0]*N
 	xr_sol1 = [0]*N
@@ -37,24 +51,80 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yr")
 		sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
 		
-		for i in range(N):
-			if i > max(particoes) :
-				yp[i].VType = gp.GRB.CONTINUOUS
-				yp[i].lb    = 0
-				yp[i].ub    = 1
-				yr[i].VType = gp.GRB.CONTINUOUS
-				yr[i].lb    = 0
-				yr[i].ub    = 1
-			elif i in particoes:
-				yp[i].lb = 0
-				yp[i].ub = 1
-				yr[i].lb = 0
-				yr[i].ub = 1
-			else:
+		if opc == 1 :
+			for i in range(N):
+
+				if i > max(particoes[ind_parti]) :
+					yp[i].VType = gp.GRB.CONTINUOUS
+					yp[i].lb    = 0
+					yp[i].ub    = 1
+					yr[i].VType = gp.GRB.CONTINUOUS
+					yr[i].lb    = 0
+					yr[i].ub    = 1
+				elif i in particoes[ind_parti]:
+					yp[i].lb = 0
+					yp[i].ub = 1
+					yr[i].lb = 0
+					yr[i].ub = 1
+				else:
+					yp[i].lb = yp_sol[i]
+					yp[i].ub = yp_sol[i]
+					yr[i].lb = yr_sol[i]
+					yr[i].ub = yr_sol[i]
+
+		elif ind_parti >= N :
+			for i in range(N):
 				yp[i].lb = yp_sol[i]
 				yp[i].ub = yp_sol[i]
-				yr[i].lb = yr_sol[i]
-				yr[i].ub = yr_sol[i]
+
+				if i > max(sub_set_rema) :
+					yr[i].VType = gp.GRB.CONTINUOUS
+					yr[i].lb    = 0
+					yr[i].ub    = 1
+				elif i in sub_set_rema:
+					yr[i].lb = 0
+					yr[i].ub = 1
+				else:
+					yr[i].lb = yr_sol[i]
+					yr[i].ub = yr_sol[i]
+
+		
+		else:
+
+			for i in range(N):
+
+				if i > max(sub_set_prod) :
+					yp[i].VType = gp.GRB.CONTINUOUS
+					yp[i].lb    = 0
+					yp[i].ub    = 1
+				elif i in sub_set_prod:
+					yp[i].lb = 0
+					yp[i].ub = 1
+					yr[i].lb = 0
+					yr[i].ub = 1
+				else:
+					yp[i].lb = yp_sol[i]
+					yp[i].ub = yp_sol[i]
+
+			if ind_parti > 0 :
+				for i in range(N):
+
+					if i > max(sub_set_rema) :
+						yr[i].VType = gp.GRB.CONTINUOUS
+						yr[i].lb    = 0
+						yr[i].ub    = 1
+					elif i in sub_set_rema:
+						yr[i].lb = 0
+						yr[i].ub = 1
+					else:
+						yr[i].lb = yr_sol[i]
+						yr[i].ub = yr_sol[i]
+			elif ind_parti == 0:
+				for i in range(N):
+					yr[i].VType = gp.GRB.CONTINUOUS
+					yr[i].lb    = 0
+					yr[i].ub    = 1
+
 
 		
 		model.update()

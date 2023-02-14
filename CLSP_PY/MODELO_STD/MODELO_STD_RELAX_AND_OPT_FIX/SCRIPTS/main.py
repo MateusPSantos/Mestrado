@@ -19,8 +19,8 @@ from datetime import datetime, date
 
 
 file_name = sys.argv[1]
-
-USE_FOP = True # Se usa o fix and optimize
+fator = float(sys.argv[2])
+USE_FOP = True# Se usa o fix and optimize
 
 
 #######################################################################
@@ -49,9 +49,14 @@ temp = 0
 gap = 0
 obj = 0
 
-
-
-
+from datetime import *
+def timer(start_time=None):
+	if not start_time:
+		start_time = datetime.now()
+		return start_time
+	elif start_time:
+		temp_sec = (datetime.now() - start_time).total_seconds()
+		return temp_sec
 
 
 def main():
@@ -94,31 +99,55 @@ def main():
 
 			
 	soma = sum(D)
-	fator = 1.5
+	
 	#Capacidade de cada período
 	C = (soma * fator)/N
 	
 	subset = gera.gera_particoes(N)
 	print(subset)
-	
+	print("***********************************************************")
+	print("relax_fix")
+	print("***********************************************************")
+
+	start_rf = timer()
 	for conj in subset:
 		rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
-		print(rf_yp_sol)
 
-	for conj in subset:
-		rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
-		print(rf_yp_sol)
+	temp_rf = timer(start_rf)
+
+	rf_obj1,rf_xp_sol1,rf_xr_sol1,rf_sp_sol1,rf_sr_sol1,rf_yp_sol1,rf_yr_sol1, rf_bestbound1, rf_numnode1,rf_gap1,rf_elapsed1 =rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed 
+	
+	temp_opt = 0.0
+	if USE_FOP == True:
+		print("***********************************************************")
+		print("fix_and_optimize")
+		print("***********************************************************")
+		start_opt = timer()
+		for conj in subset:
+			rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol)
+
+		temp_opt = timer(start_opt)
+
 
 	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol)
-
+	
+	temp_total = timer(start_rf)
 
 
 		
-	arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_table'+str(fator)+'.txt'),'a')
-	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj,3))+';'+str(round(bestbound,3))+\
-					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+
+	
+	if USE_FOP == True:
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table'+str(fator)+'.txt'),'a')
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
+					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
-	arquivo.close()
+		arquivo.close()
+	else :
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table'+str(fator)+'.txt'),'a')
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
+					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
+					'\n')
+		arquivo.close()
 
 
 

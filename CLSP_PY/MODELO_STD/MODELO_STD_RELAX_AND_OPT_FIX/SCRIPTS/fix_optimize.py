@@ -7,7 +7,7 @@ MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 
 
-def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
+def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_sol):
 
     #indices = []
     #indices = particoes.copy()
@@ -39,6 +39,16 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
                 yp[i].ub    = yp_sol[i]
                 yr[i].lb    = yr_sol[i]
                 yr[i].ub    = yr_sol[i]
+            else:
+                yp[i].start = yp_sol[i]
+                yr[i].start = yr_sol[i]
+        for i in range(N):
+            xp[i].start = xp_sol[i]
+            xr[i].start = xr_sol[i]
+            sp[i].start = sp_sol[i]
+            sr[i].start = sr_sol[i]
+
+
         
         model.update()
         # # Set objective
