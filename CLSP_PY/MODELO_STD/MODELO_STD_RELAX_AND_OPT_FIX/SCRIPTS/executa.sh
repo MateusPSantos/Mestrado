@@ -10,9 +10,9 @@ description=${instance}_${form}_${fatorc}_${opt}
 
 for tam in 52
 do
-    for id in $(seq 108)
-    do
-	python3 main.py ${tam}_${id}.txt 
+    for id in $(seq 10)
+       do
+	        python3 main.py ${tam}_${id}.txt ${fatorc}
+       done
 
-    done
 done

@@ -20,7 +20,7 @@ from datetime import datetime, date
 
 file_name = sys.argv[1]
 fator = float(sys.argv[2])
-USE_FOP = True# Se usa o fix and optimize
+USE_FOP = False# Se usa o fix and optimize
 
 
 #######################################################################
@@ -122,6 +122,7 @@ def main():
 		print("***********************************************************")
 		print("fix_and_optimize")
 		print("***********************************************************")
+		#subset = gera.gera_particoes(N,tamanho_particao=10,num_par_fix=2,indice_geracao=1)
 		start_opt = timer()
 		for conj in subset:
 			rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol)

@@ -3,9 +3,12 @@ from pathlib import Path
 import os
 import leitura as ler
 import optimization as opt
-import sys
-from gurobipy import GRB
+import relax_fix as rf
+import fix_optimize as fop
+import gera_particoes as gera
 import numpy as np
+import pandas as pd
+import sys
 from datetime import datetime, date
 
 
@@ -16,7 +19,8 @@ from datetime import datetime, date
 
 
 file_name = sys.argv[1]
-
+fator = float(sys.argv[2])
+USE_FOP = True# Se usa o fix and optimize
 
 
 #######################################################################
@@ -45,9 +49,14 @@ temp = 0
 gap = 0
 obj = 0
 
-
-
-
+from datetime import *
+def timer(start_time=None):
+	if not start_time:
+		start_time = datetime.now()
+		return start_time
+	elif start_time:
+		temp_sec = (datetime.now() - start_time).total_seconds()
+		return temp_sec
 
 
 def main():
@@ -62,10 +71,20 @@ def main():
 
 	xp_sol = [0]*N
 	xr_sol = [0]*N
-	sp_sol = [0]*N
-	sr_sol = [0]*N
+	wp_sol = (np.zeros((N,N))).tolist()
+	wr_sol = (np.zeros((N,N))).tolist()
+	vor_sol = (np.zeros((N,N))).tolist()
 	yp_sol = [0]*N
 	yr_sol = [0]*N
+	rf_xp_sol = [0]*N
+	rf_xr_sol = [0]*N
+	rf_wp_sol = (np.zeros((N,N))).tolist()
+	rf_wr_sol = (np.zeros((N,N))).tolist()
+	rf_vor_sol = (np.zeros((N,N))).tolist()
+	rf_yp_sol = [0]*N
+	rf_yr_sol = [0]*N
+	rf_yp_sol = [0]*N
+	rf_yr_sol = [0]*N
 
 
 
@@ -82,26 +101,68 @@ def main():
 
 			
 	soma = sum(D)
-	fator = 1.5
+	
 	#Capacidade de cada período
 	C = (soma * fator)/N
+	
+	subset = gera.gera_particoes(N)
+	print(subset)
+	print("***********************************************************")
+	print("relax_fix")
+	print("***********************************************************")
 
-    
+	start_rf = timer()
+	for conj in subset:
+		rf_obj,rf_xp_sol,rf_xr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+
+	temp_rf = timer(start_rf)
+
+	rf_obj1,rf_xp_sol1,rf_xr_sol1,rf_wp_sol1,rf_wr_sol1,rf_vor_sol,rf_yp_sol1,rf_yr_sol1, rf_bestbound1, rf_numnode1,rf_gap1,rf_elapsed1 =rf_obj,rf_xp_sol,rf_xr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed 
+	
+	temp_opt = 0.0
+	if USE_FOP == True:
+		print("***********************************************************")
+		print("fix_and_optimize")
+		print("***********************************************************")
+		#subset = gera.gera_particoes(N,tamanho_particao=10,num_par_fix=2,indice_geracao=1)
+		start_opt = timer()
+		for conj in subset:
+			rf_obj,rf_xp_sol,rf_xr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol)
+
+		temp_opt = timer(start_opt)
+
+
+	temp_total = timer(start_rf)
+	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,wp_sol,wr_sol,vor_sol, yp_sol,yr_sol = opt.clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_yp_sol,rf_yr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol)
 	
 
 
-	obj,bestbound,gap,temp,numnode= opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
-
-
-
 		
-	arquivo = open(os.path.join(RESULT_PATH,'clsr_SP_table'+str(fator)+'.txt'),'a')
-	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(bestbound,3))+\
-					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+
+	
+	if USE_FOP == True:
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_MC_relax_and_opt_table'+str(fator)+'.txt'),'a')
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
+					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
-	arquivo.close()
+		arquivo.close()
+	else :
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_MC_relax_fix_table'+str(fator)+'.txt'),'a')
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
+					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
+					'\n')
+		arquivo.close()
 
 
+
+	Sol_instance = pd.DataFrame()
+	Sol_instance['xp_sol'] = pd.Series(xp_sol)
+	Sol_instance['xr_sol'] = pd.Series(xr_sol)
+	Sol_instance['wp_sol'] = pd.Series(wp_sol)
+	Sol_instance['wr_sol'] = pd.Series(wr_sol)
+	Sol_instance['yp_sol'] = pd.Series(yp_sol)
+	Sol_instance['yr_sol'] = pd.Series(yr_sol)
+
+	Sol_instance.to_csv(os.path.join(RESULT_IND_PATH,'sol_mc_instance_'+str(fator)+'_'+file_name),sep=';',index=False)
 
 if __name__== "__main__" :
 	main()
