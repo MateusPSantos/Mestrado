@@ -75,12 +75,14 @@ def main():
 	sr_sol = [0]*N
 	yp_sol = [0]*N
 	yr_sol = [0]*N
-	zsp_sol = (np.zeros((N,N))).tolist()
-	zsr_sol = (np.zeros((N,N))).tolist()
-	zr_sol = (np.zeros((N,N))).tolist()
-	l_sol = [0]*N
-	yp_sol = [0]*N
-	yr_sol = [0]*N
+	rf_xp_sol = [0]*N
+	rf_xr_sol = [0]*N
+	rf_sp_sol = [0]*N
+	rf_sr_sol = [0]*N
+	rf_yp_sol = [0]*N
+	rf_yr_sol = [0]*N
+	rf_yp_sol = [0]*N
+	rf_yr_sol = [0]*N
 
 
 
@@ -123,7 +125,7 @@ def main():
 		#subset = gera.gera_particoes(N,tamanho_particao=10,num_par_fix=2,indice_geracao=1)
 		start_opt = timer()
 		for conj in subset:
-			rf_obj,rf_sp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol)
+			rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol)
 
 		temp_opt = timer(start_opt)
 
