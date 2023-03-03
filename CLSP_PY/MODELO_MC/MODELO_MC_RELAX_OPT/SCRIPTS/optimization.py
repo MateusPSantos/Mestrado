@@ -75,7 +75,7 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 
 	K = KR - KP
 
-	print(vor_sol)
+
 
 	try:
 

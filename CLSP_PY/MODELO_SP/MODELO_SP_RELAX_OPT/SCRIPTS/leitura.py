@@ -17,5 +17,7 @@ def leitura_instance(file_name):
 	D = [int(i) for i in arq.readline().split()]
 	
 	R = [int(i) for i in arq.readline().split()]
+
+	C = int(arq.readline())
 	
 	return N, PP, PR, FP, FR, HR, HP, D, R

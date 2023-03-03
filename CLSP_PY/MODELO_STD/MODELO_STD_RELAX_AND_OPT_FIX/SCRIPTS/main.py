@@ -19,8 +19,8 @@ from datetime import datetime, date
 
 
 file_name = sys.argv[1]
-fator = float(sys.argv[2])
-USE_FOP = False# Se usa o fix and optimize
+
+USE_FOP = True# Se usa o fix and optimize
 
 
 #######################################################################
@@ -31,7 +31,7 @@ USE_FOP = False# Se usa o fix and optimize
 
 RESULT_PATH   = Path('../RESULTADOS/')
 RESULT_IND_PATH = Path('../RESULTADOS_INDIVIDUAIS/')
-INSTANCE_PATH = Path('../instances/sifaleras')
+INSTANCE_PATH = Path('../instances/csifa')
 
 #######################################################################
 ###                    VARIÁVEIS GLOBAIS                           ###    
@@ -67,7 +67,7 @@ def main():
 
 
 
-	N, PP, PR, FP, FR, HR, HP, D, R = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
+	N, PP, PR, FP, FR, HR, HP, D, R, C = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
 
 	xp_sol = [0]*N
 	xr_sol = [0]*N
@@ -98,16 +98,9 @@ def main():
 
 
 			
-	soma = sum(D)
-	
-	#Capacidade de cada período
-	C = (soma * fator)/N
 	
 	subset = gera.gera_particoes(N)
-	print(subset)
-	print("***********************************************************")
-	print("relax_fix")
-	print("***********************************************************")
+
 
 	start_rf = timer()
 	for conj in subset:
@@ -119,9 +112,7 @@ def main():
 	
 	temp_opt = 0.0
 	if USE_FOP == True:
-		print("***********************************************************")
-		print("fix_and_optimize")
-		print("***********************************************************")
+
 		#subset = gera.gera_particoes(N,tamanho_particao=10,num_par_fix=2,indice_geracao=1)
 		start_opt = timer()
 		for conj in subset:
@@ -138,13 +129,13 @@ def main():
 		
 	
 	if USE_FOP == True:
-		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table'+str(fator)+'.txt'),'a')
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table.txt'),'a')
 		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
 		arquivo.close()
 	else :
-		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table'+str(fator)+'.txt'),'a')
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table.txt'),'a')
 		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
@@ -160,7 +151,7 @@ def main():
 	Sol_instance['yp_sol'] = pd.Series(yp_sol)
 	Sol_instance['yr_sol'] = pd.Series(yr_sol)
 
-	Sol_instance.to_csv(os.path.join(RESULT_IND_PATH,'sol_instance_'+str(fator)+'_'+file_name),sep=';',index=False)
+	Sol_instance.to_csv(os.path.join(RESULT_IND_PATH,'sol_instance_'+file_name),sep=';',index=False)
 
 if __name__== "__main__" :
 	main()

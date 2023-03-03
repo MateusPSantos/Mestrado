@@ -27,7 +27,7 @@ file_name = sys.argv[1]
 
 RESULT_PATH   = Path('../RESULTADOS/')
 RESULT_IND_PATH = Path('../RESULTADOS_INDIVIDUAIS/')
-INSTANCE_PATH = Path('../instances/sifaleras')
+INSTANCE_PATH = Path('../instances/csifa')
 
 #######################################################################
 ###                    VARIÁVEIS GLOBAIS                           ###    
@@ -58,7 +58,7 @@ def main():
 
 
 
-	N, PP, PR, FP, FR, HR, HP, D, R = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
+	N, PP, PR, FP, FR, HR, HP, D, R,C = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
 
 	xp_sol = [0]*N
 	xr_sol = [0]*N
@@ -80,12 +80,6 @@ def main():
 			SR[i][j] = SR[i][j-1] + R[j]
 
 
-			
-	soma = sum(D)
-	fator = 1.5
-	#Capacidade de cada período
-	C = (soma * fator)/N
-
     
 	
 
@@ -95,7 +89,7 @@ def main():
 
 
 		
-	arquivo = open(os.path.join(RESULT_PATH,'clsr_SP_table'+str(fator)+'.txt'),'a')
+	arquivo = open(os.path.join(RESULT_PATH,'clsr_SP_table.txt'),'a')
 	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+
 					'\n')
