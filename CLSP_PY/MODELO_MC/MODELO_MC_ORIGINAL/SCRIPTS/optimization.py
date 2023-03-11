@@ -7,23 +7,17 @@ import numpy as np
 ###                    PARAMETROS                                  ###    
 ######################################################################
 
-
-
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 cap = True
 
-lsdbar = 1
-
-
+#lsdbar = 1
 
 #######################################################################
 ###                    MODELO			                           ###    
 ######################################################################
 
-
 def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
-
 
 	CP = [0]*N
 	CR = [0]*N
@@ -59,8 +53,6 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		for j in range(i,N):
 			CR[i] -= HR[j]
 
-	
-
 	for i in range(N):
 		AUX = 0 
 		for j in range(i+1):
@@ -78,10 +70,6 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 	K = KR - KP
 
-	
-	
-
-
 	try:
 
 		# Create a new model
@@ -89,35 +77,34 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		# Create variables
 		
-		wp   = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wp")
-		wr 	 = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wr")
-		vor  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="vor")
-		xp    = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xp")
-		xr    = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
-		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
-		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
-
+		wp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wp")
+		wr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wr")
+		vor = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="vor")
+		xp = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xp")
+		xr = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
 
 		# # Set objective
 		FO = 0.0
-		#FO = gp.quicksum(xp[i]*CP[i] for i in range(N)) + gp.quicksum(yp[i]*FP[i] for i in range(N)) \
-		#	+ gp.quicksum(xr[i]*CR[i] for i in range(N)) + gp.quicksum(yr[i]*FR[i] for i in range(N)) + K
+		#FO = gp.quicksum(xp[i]*CP[i] for i in range(N)) \
+		# + gp.quicksum(yp[i]*FP[i] for i in range(N)) \
+		# + gp.quicksum(xr[i]*CR[i] for i in range(N)) \
+		# + gp.quicksum(yr[i]*FR[i] for i in range(N)) + K
 		
-		
+		for i in range(N):
+			FO += xp[i]*CP[i]
 
 		for i in range(N):
-			FO+= xp[i]*CP[i]
+			FO += yp[i]*FP[i]
 
 		for i in range(N):
-			FO+= yp[i]*FP[i]
+			FO += xr[i]*CR[i]
 
 		for i in range(N):
-			FO+= xr[i]*CR[i]
+			FO += yr[i]*FR[i]
 
-		for i in range(N):
-			FO+= yr[i]*FR[i]
-
-		FO+= K
+		FO += K
 		
 		model.setObjective(FO, sense = GRB.MINIMIZE)
 
@@ -143,9 +130,7 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		model.addConstrs(xp[i]+xr[i] <= C for i in range(N))
 
-
 		# # Add constraints
-
 
 		#model.addConstrs(gp.quicksum(wp[j,i]+wr[j,i] for j in range(i+1)) >= D[i] for i in range(N))
 
@@ -170,10 +155,8 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		#model.addConstrs(xp[i]+xr[i] <= C for i in range(N))
 
-		if lsdbar == 1:
-			model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
-
-	 
+	#	if lsdbar == 1:
+	#		model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
 
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
@@ -182,18 +165,16 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		model.setParam(GRB.Param.Cuts, -1)
 		model.setParam(GRB.Param.Presolve,-1)
 
-
-
-
 		# Optimize model
 		model.optimize()
 
-
-
+		tmp=0
+		if model.status == GRB.OPTIMAL:
+			tmp=1
 
 		print('Obj: %g' % model.ObjVal)
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
-	return model.ObjVal, model.ObjBound,model.MIPGap,model.Runtime, model.NodeCount
+	return model.ObjVal,model.ObjBound,model.MIPGap,model.Runtime,model.NodeCount,tmp
