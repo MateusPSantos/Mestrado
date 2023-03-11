@@ -31,7 +31,7 @@ USE_FOP = False# Se usa o fix and optimize
 
 RESULT_PATH   = Path('../RESULTADOS/')
 RESULT_IND_PATH = Path('../RESULTADOS_INDIVIDUAIS/')
-INSTANCE_PATH = Path('../instances/sifaleras')
+INSTANCE_PATH = Path('../../../../instances/c1sifa')
 
 #######################################################################
 ###                    VARIÁVEIS GLOBAIS                           ###    

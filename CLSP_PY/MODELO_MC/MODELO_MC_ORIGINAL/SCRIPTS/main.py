@@ -27,7 +27,7 @@ file_name = sys.argv[1]
 
 RESULT_PATH   = Path('../RESULTADOS/')
 RESULT_IND_PATH = Path('../RESULTADOS_INDIVIDUAIS/')
-INSTANCE_PATH = Path('../instances/csifa')
+INSTANCE_PATH = Path('../../../../instances/c1sifa')
 
 #######################################################################
 ###                    VARIÁVEIS GLOBAIS                           ###    

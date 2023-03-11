@@ -64,6 +64,10 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		# Optimize model
 		model.optimize()
+		
+		tmp=0
+		if model.status == GRB.OPTIMAL:
+			tmp=1
 
 		xp_sol = [xp[i].X for i in range(N)]
 		xr_sol = [xr[i].X for i in range(N)]
@@ -80,5 +84,5 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
-	return model.ObjVal, model.ObjBound,model.MIPGap,model.Runtime, model.NodeCount, \
+	return model.ObjVal,model.ObjBound,model.MIPGap,model.Runtime,model.NodeCount,tmp, \
 				xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol
