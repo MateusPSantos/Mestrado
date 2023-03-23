@@ -3,9 +3,9 @@ from pathlib import Path
 import os
 import leitura as ler
 import optimization as opt
-import numpy as np
-import pandas as pd
 import sys
+from gurobipy import GRB
+import numpy as np
 from datetime import datetime, date
 
 #######################################################################
@@ -27,6 +27,7 @@ INSTANCE_PATH = Path('../../../../instances/c1sifa')
 ######################################################################
 
 #Guarda solução
+
 objval = 0
 bestbound = 0
 numnode = 0
@@ -58,14 +59,10 @@ def main():
 			SD[i][j] = SD[i][j-1] + D[j]
 			SR[i][j] = SR[i][j-1] + R[j]
 
-	obj,bestbound,gap,temp,numnode,tmp = opt.ulsr_std(N,PP,PR,FP,FR,HR,HP,D,R,SD,SR,C)
-	
-	arquivo = open(os.path.join(RESULT_PATH,'ulsr_std_table.txt'),'a')
-	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(bestbound,3))+\
-					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+\
-					';'+str(round(tmp,3))+
-					'\n')
-
+	obj,temp = opt.ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR)
+		
+	arquivo = open(os.path.join(RESULT_PATH,'ulsr_mc_lp.txt'),'a')
+	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+'\n')
 	arquivo.close()
 
 if __name__== "__main__" :

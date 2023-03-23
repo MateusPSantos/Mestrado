@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 import leitura as ler
@@ -59,13 +58,10 @@ def main():
 			SD[i][j] = SD[i][j-1] + D[j]
 			SR[i][j] = SR[i][j-1] + R[j]
 
-	obj,bestbound,gap,temp,numnode,tmp= opt.clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+	obj,temp = opt.ulsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR)
 		
-	arquivo = open(os.path.join(RESULT_PATH,'clsr_mc_mip.txt'),'a')
-	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(bestbound,3))+\
-					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+\
-					';'+str(round(tmp,3))+\
-					'\n')
+	arquivo = open(os.path.join(RESULT_PATH,'ulsr_sp_lp.txt'),'a')
+	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+'\n')
 	arquivo.close()
 
 if __name__== "__main__" :

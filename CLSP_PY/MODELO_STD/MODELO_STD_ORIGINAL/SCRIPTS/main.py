@@ -60,7 +60,7 @@ def main():
 
 	obj,bestbound,gap,temp,numnode,tmp,xp_sol,xr_sol,sp_sol,sr_sol,yp_sol,yr_sol = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 	
-	arquivo = open(os.path.join(RESULT_PATH,'clsr_std_table.txt'),'a')
+	arquivo = open(os.path.join(RESULT_PATH,'clsr_std_mip.txt'),'a')
 	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+\
 					';'+str(round(tmp,3))+
