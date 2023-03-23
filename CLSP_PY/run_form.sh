@@ -28,24 +28,3 @@ do
 	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS
 	bash executa.sh
 done
-
-
-#	for id in {1..1} # in $(seq 1)
-#	do
-#		~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/python3 main.py c52_${id}.txt >> ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/report/out_${fo}_c52_${id}.txt
-#	done
-#done
-
-#fo=STD
-#bash ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/executa.sh
-#for id in {1..1} # in $(seq 1)
-#do
-#	~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/python3 main.py c52_${id}.txt >> ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/report/out_${fo}_c52_${id}.txt
-#done
-
-#fo=MC
-#bash ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/executa.sh
-#for id in {1..1} # in $(seq 1)
-#do
-#	python3 ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/main.py c52_${id}.txt >> ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/report/out_${fo}_c52_${id}.txt
-#done

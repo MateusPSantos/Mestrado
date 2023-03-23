@@ -1,7 +1,9 @@
 #!/bin/bash
 #52 periodos, 108 instancias
 
+prob=ulsr
 fo=sp
+solver=lp
 
 # set01 {1..12}
 # set02 {13..24}
@@ -13,7 +15,7 @@ fo=sp
 # set08 {85..96}
 # set09 {97..108}
 
-for id in {1..12} #$(seq 1)
+for id in {1..108} #$(seq 1)
 do
-	python3 main.py c52_${id}.txt >> report/out_${fo}_c52_${id}.txt
+	python3 ${prob}_${fo}_${solver}.py c52_${id}.txt >> report/out_${prob}_${fo}_${solver}_c52_${id}.txt
 done
