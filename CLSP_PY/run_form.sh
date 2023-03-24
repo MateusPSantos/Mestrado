@@ -14,17 +14,28 @@
 for fo in MC
 do
 	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS
-	bash executa.sh
+	bash execute_mc.sh
 done
 
 for fo in SP
 do
 	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS
-	bash executa.sh
+	bash execute_sp.sh
 done
 
 for fo in STD
 do
 	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS
-	bash executa.sh
+	bash execute_std.sh
 done
+
+
+#for fo in MC SP STD
+#do
+#	for id in {1..12} #$(seq 1)
+#	do
+#		python3 ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS/${prob}_${fo}_${solver}.py c52_${id}.txt >> ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTSreport/out_${prob}_${fo}_${solver}_c52_${id}.txt
+#	done
+#	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS
+#	bash executa.sh
+#done
