@@ -13,6 +13,6 @@
 
 for fo in STD SP MC
 do
-	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_RELAX_OPT/SCRIPTS
+	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_RF_OPT/SCRIPTS
 	bash execute_${fo}.sh
 done
