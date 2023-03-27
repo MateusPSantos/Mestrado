@@ -19,7 +19,7 @@ from datetime import datetime, date
 
 
 file_name = sys.argv[1]
-fator = float(sys.argv[2])
+
 USE_FOP = False# Se usa o fix and optimize
 
 
@@ -67,14 +67,25 @@ def main():
 
 
 
-	N, PP, PR, FP, FR, HR, HP, D, R = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
+	N, PP, PR, FP, FR, HR, HP, D, R ,C= ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
 
-	xp_sol = [0]*N
-	xr_sol = [0]*N
-	sp_sol = [0]*N
-	sr_sol = [0]*N
-	yp_sol = [0]*N
-	yr_sol = [0]*N
+
+	rf_zsp_sol = (np.zeros((N,N))).tolist()
+	rf_zsr_sol = (np.zeros((N,N))).tolist()
+	rf_zr_sol = (np.zeros((N,N))).tolist()
+	rf_l_sol = [0]*N
+	rf_yp_sol = [0]*N
+	rf_yr_sol = [0]*N
+
+
+	fo_zsp_sol = (np.zeros((N,N))).tolist()
+	fo_zsr_sol = (np.zeros((N,N))).tolist()
+	fo_zr_sol = (np.zeros((N,N))).tolist()
+	fo_l_sol = [0]*N
+	fo_yp_sol = [0]*N
+	fo_yr_sol = [0]*N
+
+
 	zsp_sol = (np.zeros((N,N))).tolist()
 	zsr_sol = (np.zeros((N,N))).tolist()
 	zr_sol = (np.zeros((N,N))).tolist()
@@ -96,10 +107,7 @@ def main():
 
 
 			
-	soma = sum(D)
-	
-	#Capacidade de cada período
-	C = (soma * fator)/N
+
 	
 	subset = gera.gera_particoes(N)
 	print(subset)
@@ -109,12 +117,12 @@ def main():
 
 	start_rf = timer()
 	for conj in subset:
-		rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+		rf_obj,rf_zsp_sol,rf_zsr_sol,rf_zr_sol,rf_l_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 
 	temp_rf = timer(start_rf)
 
-	rf_obj1,rf_xp_sol1,rf_xr_sol1,rf_sp_sol1,rf_sr_sol1,rf_yp_sol1,rf_yr_sol1, rf_bestbound1, rf_numnode1,rf_gap1,rf_elapsed1 =rf_obj,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed 
-	
+	fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol = rf_zsp_sol,rf_zsr_sol,rf_zr_sol,rf_l_sol,rf_yp_sol,rf_yr_sol
+
 	temp_opt = 0.0
 	if USE_FOP == True:
 		print("***********************************************************")
@@ -123,12 +131,12 @@ def main():
 		#subset = gera.gera_particoes(N,tamanho_particao=10,num_par_fix=2,indice_geracao=1)
 		start_opt = timer()
 		for conj in subset:
-			rf_obj,rf_sp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol)
+			fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed = fop.fix_and_optimize(conj,fo_yp_sol,fo_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol)
 
 		temp_opt = timer(start_opt)
 
 
-	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol)
+	obj,bestbound,gap,temp,numnode,zsp_sol,zsr_sol,zr_sol,l_sol, yp_sol,yr_sol = opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol)
 	
 	temp_total = timer(start_rf)
 
@@ -137,28 +145,19 @@ def main():
 	
 	if USE_FOP == True:
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table'+str(fator)+'.txt'),'a')
-		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_rf,3))+';'+str(round(fo_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
 		arquivo.close()
 	else :
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table'+str(fator)+'.txt'),'a')
-		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
 		arquivo.close()
 
 
 
-	Sol_instance = pd.DataFrame()
-	Sol_instance['xp_sol'] = pd.Series(xp_sol)
-	Sol_instance['xr_sol'] = pd.Series(xr_sol)
-	Sol_instance['sp_sol'] = pd.Series(sp_sol)
-	Sol_instance['sr_sol'] = pd.Series(sr_sol)
-	Sol_instance['yp_sol'] = pd.Series(yp_sol)
-	Sol_instance['yr_sol'] = pd.Series(yr_sol)
-
-	Sol_instance.to_csv(os.path.join(RESULT_IND_PATH,'sol_instance_'+str(fator)+'_'+file_name),sep=';',index=False)
 
 if __name__== "__main__" :
 	main()

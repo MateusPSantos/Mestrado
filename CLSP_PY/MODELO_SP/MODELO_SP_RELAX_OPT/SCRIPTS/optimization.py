@@ -22,7 +22,7 @@ cap = True
 ######################################################################
 
 
-def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
+def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_sol,yp_sol,yr_sol):
 
 
 	CSP = (np.zeros((N,N))).tolist()
@@ -54,6 +54,17 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
 		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
 		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
+
+
+
+		for i in range(N):
+			l[i].start = l_sol[i]
+			yp[i].start = yp_sol[i]
+			yr[i].start = yr_sol[i]
+			for j in range(i,N):
+				zsp[i,j].start = zsp_sol[i][j]
+				zsr[i,j].start = zsr_sol[i][j]
+				zr[i,j].start = zr_sol[i][j]
 
 
 		# # Set objective

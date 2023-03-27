@@ -76,7 +76,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 				yr[i].lb = yr_sol[i]
 				yr[i].ub = yr_sol[i]
 
-		
 		model.update()
 
 		# # Set objective

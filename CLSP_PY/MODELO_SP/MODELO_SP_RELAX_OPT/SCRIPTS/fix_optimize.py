@@ -7,17 +7,37 @@ MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 
 
-def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_sol):
+def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_sol):
 
-    #indices = []
-    #indices = particoes.copy()
+    zsp_sol1 = (np.zeros((N,N))).tolist()
+    zsr_sol1 = (np.zeros((N,N))).tolist()
+    zr_sol1 = (np.zeros((N,N))).tolist()
+    l_sol1 = [0]*N
+    yp_sol1 = [0]*N
+    yr_sol1 = [0]*N
 
-    #if num_subset == 1 :
-    #    indices = particoes.copy()
-    #else :
-    #    for  i in range(len(particoes)):
-    #       for j in range(len(particoes[i])):
-    #            indices.append(j)
+    objval = 0.0
+    bestbound = 0.0
+    numnode = 0.0
+    elapsed = 0.0
+    gap = 0.0
+
+    CSP = (np.zeros((N,N))).tolist()
+    CSR = (np.zeros((N,N))).tolist()
+    CR = (np.zeros((N,N))).tolist()
+    CL = [0]*N
+
+    for i in range(N):
+        for j in range(i,N):
+            CR[i][j]  = sum(HR[t]*SR[i][t] for t in range(i,j))
+            CSP[i][j] = PP[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
+            CSR[i][j] = PR[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
+
+    for i in range(N):
+        CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
+    
+
+
     try:
 
         # Create a new model
@@ -25,12 +45,13 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 
         # Create variables
     
-        xp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xp")
-        yp = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yp")
-        sp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sp")
-        xr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xr")
-        yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yr")
-        sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
+        zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
+        zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
+        zr  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
+        l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
+        yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
+        yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
+
 
       
         for i in range(N):
@@ -43,53 +64,107 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
                 yp[i].start = yp_sol[i]
                 yr[i].start = yr_sol[i]
         for i in range(N):
-            xp[i].start = xp_sol[i]
-            xr[i].start = xr_sol[i]
-            sp[i].start = sp_sol[i]
-            sr[i].start = sr_sol[i]
+            l[i].start = l_sol[i]
+            for j in range(i,N):
+                zsp[i,j].start = zsp_sol[i][j]
+                zsr[i,j].start = zsr_sol[i][j]
+                zr[i,j].start = zr_sol[i][j]
+
+                
+                
 
 
         
         model.update()
+
         # # Set objective
-        model.setObjective(gp.quicksum(PP[i]*xp[i]+sp[i]*HP[i] + xr[i]*PR[i] + sr[i]*HR[i] + yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
+        FO = None
+        for i in range(N):
+            FO += yp[i]*FP[i] + yr[i]*FR[i] + l[i]*CL[i] + gp.quicksum(zsp[i,j]*CSP[i][j] + zsr[i,j]*CSR[i][j]+
+                                                                       zr[i,j]*CR[i][j] for j in range(i,N))
+
+        model.setObjective(FO, sense = GRB.MINIMIZE)
 
         # # Add constraints
-    
-        model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
-        model.addConstrs(sp[i-1] + xp[i] + xr[i] - sp[i] == D[i] for i in range(N) if i > 0 )
-        model.addConstr(R[0] - xr[0] - sr[0] == 0)
-        model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
-        model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
-        model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1],C) <= 0 for i in range(N))
-        model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
-       # model.write(file_name+"_model.lp")
+
+        model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
+
+        
+        model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
+        
+        
+        model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
+            
+        
+        
+        model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
+            
+            
+        
+        model.addConstr(gp.quicksum(zr[0,j] for j in range(N)) +l[0]==1)
+
+            
+            
+        model.addConstrs(gp.quicksum(zr[i,t-1] for i in range(0,t)) == gp.quicksum(
+             zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N))       
+            
+            
+        model.addConstrs(gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N))    
+            
+
+        model.addConstrs(gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
+                          gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N))
+
+
+        model.addConstrs(gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N))
+        
+        model.addConstrs(gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*min(SR[0][i],SD[i][N-1]) for i in range(N))
+        
+        model.addConstrs((gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
+                           gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N))<= C for t in range(N)))
+        
+
+
+        
+     
 
         # Parameters 
         model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
         model.setParam(GRB.Param.MIPGap, EPSILON)
-        model.setParam(GRB.Param.Threads,3)
+        model.setParam(GRB.Param.Threads,1)
         model.setParam(GRB.Param.Cuts, -1)
         model.setParam(GRB.Param.Presolve,-1)
+
 
 
 
         # Optimize model
         model.optimize()
 
-        xp_sol = [xp[i].X for i in range(N)]
-        xr_sol = [xr[i].X for i in range(N)]
-        sp_sol = [sp[i].X for i in range(N)]
-        sr_sol = [sr[i].X for i in range(N)]
-        yp_sol = [yp[i].X for i in range(N)]
-        yr_sol = [yr[i].X for i in range(N)]
 
 
+        objval = model.ObjVal
+        bestbound = model.ObjBound
+        numnode = model.NodeCount
+        elapsed = model.Runtime
+        gap = model.MIPGap
 
 
-        print('Obj: %g' % model.ObjVal)
+        for i in range(N):
+            for j in range(i,N):
+                zsp_sol1[i][j] = zsp[i,j].X
+                zsr_sol1[i][j] = zsr[i,j].X
+                zr_sol1[i][j] = zr[i,j].X
+
+        l_sol1  = [l[i].X for i in range(N)]
+        yp_sol1 = [yp[i].X for i in range(N)]
+        yr_sol1 = [yr[i].X for i in range(N)]
+
 
     except gp.GurobiError as e:
         print('Error code ' + str(e.errno) + ': ' + str(e))
 
-    return model.ObjVal, xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol, model.ObjBound, model.NodeCount,model.MIPGap,model.Runtime
+    #except AttributeError:
+    #   print('Encountered an attribute error')
+
+    return model.ObjVal, zsp_sol1,zsr_sol1,zr_sol1, l_sol1, yp_sol1,yr_sol1, bestbound, numnode, gap,elapsed
