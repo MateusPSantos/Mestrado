@@ -8,7 +8,7 @@ from gurobipy import GRB
 
 
 
-MAX_CPU_TIME = 3600.0
+MAX_CPU_TIME = 600.0
 EPSILON = 0.000001
 cap = True
 

@@ -11,7 +11,7 @@ MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 #cap = True
 
-#lsdbar = 1
+lsdbar = 1
 
 #######################################################################
 ###                    CLSR MC MIP		                            ###    
@@ -382,8 +382,8 @@ def ulsr_mc_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		vor = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="vor")
 		xp = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xp")
 		xr = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
-		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
-		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
 
 		# # Set objective
 		FO = 0.0
@@ -429,8 +429,8 @@ def ulsr_mc_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
 
-	#	if lsdbar == 1:
-	#		model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
+		if lsdbar == 1:
+			model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
 
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
@@ -564,8 +564,8 @@ def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
 
-	#	if lsdbar == 1:
-	#		model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
+		if lsdbar == 1:
+			model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
 
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
