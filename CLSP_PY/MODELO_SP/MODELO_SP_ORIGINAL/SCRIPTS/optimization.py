@@ -68,30 +68,53 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		## Add constraints
 
-		model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
+		model.addConstr(
+			gp.quicksum(zsp[0,j] + zsr[0,j] for j in range(N)) ==1
+			)
 		
-		model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
+		model.addConstrs(
+			gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - 
+			gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) 
+			)
 				
-		model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
+		model.addConstrs(
+			gp.quicksum(zsp[t,j] for j in range(t,N)) <= yp[t] for t in range(N)
+			)
 			
-		model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
+		model.addConstrs(
+			gp.quicksum(zsr[t,j] for j in range(t,N)) <= yr[t] for t in range(N)
+			)
 			
-		model.addConstr(gp.quicksum(zr[0,j] for j in range(N)) +l[0]==1)
+		model.addConstr(
+			gp.quicksum(zr[0,j] for j in range(N)) + l[0]==1
+			)
 					
-		model.addConstrs(gp.quicksum(zr[i,t-1] for i in range(0,t)) == gp.quicksum(
-			 zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N))       
+		model.addConstrs(
+			gp.quicksum(zr[i,t-1] for i in range(0,t)) == 
+			gp.quicksum(zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N)
+			)       
 				
-		model.addConstrs(gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N))    
+		model.addConstrs(
+			gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N)
+			)    
 			
-		model.addConstrs(gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
-						  gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N))
+		model.addConstrs(
+			gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
+			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
+			)
 
-		model.addConstrs(gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N))
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+#			)
 		
-		model.addConstrs(gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N))
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
+#			)
 		
-		model.addConstrs((gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
-						   gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N))<= C for t in range(N)))
+		model.addConstrs(
+			gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) + 
+			gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N)) <= C for t in range(N)
+			)
 		
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
@@ -145,10 +168,10 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		# Create variables
 		zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
 		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
-		zr  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
-		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
-		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yp")
-		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
+		zr = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
+		l = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
 
 		## Set objective
 		FO = 0.0
@@ -162,30 +185,53 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 		## Add constraints
 
-		model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
+		model.addConstr(
+			gp.quicksum(zsp[0,j] + zsr[0,j] for j in range(N)) == 1
+			)
 		
-		model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
+		model.addConstrs(
+			gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - 
+			gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N)
+			)
 				
-		model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
+		model.addConstrs(
+			gp.quicksum(zsp[t,j] for j in range(t,N)) <= yp[t] for t in range(N)
+			)
 			
-		model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
+		model.addConstrs(
+			gp.quicksum(zsr[t,j] for j in range(t,N)) <= yr[t] for t in range(N)
+			)
 			
-		model.addConstr(gp.quicksum(zr[0,j] for j in range(N)) +l[0]==1)
+		model.addConstr(
+			gp.quicksum(zr[0,j] for j in range(N)) + l[0] == 1
+			)
 					
-		model.addConstrs(gp.quicksum(zr[i,t-1] for i in range(0,t)) == gp.quicksum(
-			 zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N))       
+		model.addConstrs(
+			gp.quicksum(zr[i,t-1] for i in range(0,t)) == 
+			gp.quicksum(zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N)
+			)       
 				
-		model.addConstrs(gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N))    
+		model.addConstrs(
+			gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N)
+			)    
 			
-		model.addConstrs(gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
-						  gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N))
+		model.addConstrs(
+			gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
+			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
+			)
 
-		model.addConstrs(gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N))
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+#			)
 		
-		model.addConstrs(gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N))
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
+#			)
 		
-		model.addConstrs((gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
-						   gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N))<= C for t in range(N)))
+		model.addConstrs(
+			gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
+			gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N)) <= C for t in range(N)
+		)
 		
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
@@ -234,10 +280,10 @@ def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		# Create variables
 		zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
 		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
-		zr  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
-		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
-		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GGRB.CONTINUOUS, name="yp")
-		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
+		zr = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
+		l = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GGRB.CONTINUOUS, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
 
 		## Set objective
 		FO = 0.0
@@ -251,27 +297,48 @@ def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 
 		## Add constraints
 
-		model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
+		model.addConstr(
+			gp.quicksum(zsp[0,j] + zsr[0,j] for j in range(N)) == 1
+			)
 		
-		model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
+		model.addConstrs(
+			gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - 
+			gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) 
+			)
 				
-		model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
+		model.addConstrs(
+			gp.quicksum(zsp[t,j] for j in range(t,N) ) <= yp[t] for t in range(N)
+			)
 			
-		model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
+		model.addConstrs(
+			gp.quicksum(zsr[t,j] for j in range(t,N)) <= yr[t] for t in range(N)
+			)
 			
-		model.addConstr(gp.quicksum(zr[0,j] for j in range(N)) +l[0]==1)
+		model.addConstr(
+			gp.quicksum(zr[0,j] for j in range(N)) + l[0] == 1
+			)
 					
-		model.addConstrs(gp.quicksum(zr[i,t-1] for i in range(0,t)) == gp.quicksum(
-			 zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N))       
+		model.addConstrs(
+			gp.quicksum(zr[i,t-1] for i in range(0,t)) == 
+			gp.quicksum(zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N)
+			)       
 				
-		model.addConstrs(gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N))    
+		model.addConstrs(
+			gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N)
+			)    
 			
-		model.addConstrs(gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
-						  gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N))
+		model.addConstrs(
+			gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) == 
+			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
+			)
 
-		#model.addConstrs(gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N))
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N)
+#			)
 		
-		#model.addConstrs(gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N))
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
+#			)
 				
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
@@ -312,21 +379,19 @@ def ulsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 			CSR[i][j] = PR[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
 
 	for i in range(N):
-		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
-	
+		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))	
 
 	try:
-
 		# Create a new model
 		model = gp.Model("ULSR_SP_LP")
 
 		# Create variables
-		zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
-		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
-		zr  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
-		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
-		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yp")
-		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
+		zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb=0.0, ub=float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
+		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb=0.0, ub=float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
+		zr = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb=0.0, ub=float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
+		l = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.CONTINUOUS, name="l")
+		yp = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.CONTINUOUS, name="yp")
+		yr = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.CONTINUOUS, name="yr")
 
 		## Set objective
 		FO = 0.0
@@ -340,34 +405,62 @@ def ulsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 
 		## Add constraints
 
-		model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
-		
-		model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
+		model.addConstr(
+			gp.quicksum(zsp[0,j] + zsr[0,j] for j in range(N)) == 1
+			)		
+		model.addConstrs(
+			gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - 
+			gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) 
+			)
 				
-		model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
+		#model.addConstrs(
+		#	gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N)
+		#	)
+		model.addConstrs(
+			gp.quicksum(zsp[t,j] for j in range(t,N)) <= yp[t] for t in range(N)
+			)
 			
-		model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
+		#model.addConstrs(
+		#	gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N)
+		#	)
+		model.addConstrs(
+			gp.quicksum(zsr[t,j] for j in range(t,N)) <= yr[t] for t in range(N)
+			)
 			
-		model.addConstr(gp.quicksum(zr[0,j] for j in range(N)) +l[0]==1)
-					
-		model.addConstrs(gp.quicksum(zr[i,t-1] for i in range(0,t)) == gp.quicksum(
-			 zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N))       
+		model.addConstr(
+			gp.quicksum(zr[0,j] for j in range(N)) + l[0] == 1
+			)					
+		model.addConstrs(
+			gp.quicksum(zr[i,t-1] for i in range(0,t)) == 
+			gp.quicksum(zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N)
+			)       
 				
-		model.addConstrs(gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N))    
+		model.addConstrs(
+			gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N)
+			)    
 			
-		model.addConstrs(gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
-						  gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N))
+		model.addConstrs(
+			gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
+			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
+			)
 
-		model.addConstrs(gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N))
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N)
+#			)
 		
-		model.addConstrs(gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N))
+#		model.addConstrs(gp.quicksum(
+#			SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
+#			)
 				
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, 3)
-		model.setParam(GRB.Param.Presolve,2)
+#		model.setParam(GRB.Param.Threads, 1) #3
+#		model.setParam(GRB.Param.Cuts, 3)
+#		model.setParam(GRB.Param.Presolve,2)
+		model.setParam(GRB.Param.Threads, 1)
+		model.setParam(GRB.Param.Cuts, -1)
+		model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()

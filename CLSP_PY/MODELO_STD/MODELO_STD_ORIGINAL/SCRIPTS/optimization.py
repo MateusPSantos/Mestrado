@@ -21,17 +21,20 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		model = gp.Model("CLSR_STD_MIP")
 
 		# Create variables
-		xp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xp")
-		yp = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yp")
-		sp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sp")
-		xr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xr")
-		yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yr")
-		sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
+		xp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xp")
+		yp = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.BINARY, name="yp")
+		sp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sp")
+		xr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xr")
+		yr = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.BINARY, name="yr")
+		sr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sr")
 		
 		model.update()
 
 		## Set objective
-		model.setObjective(gp.quicksum(PP[i]*xp[i]+sp[i]*HP[i] + xr[i]*PR[i] + sr[i]*HR[i] + yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
+		model.setObjective(gp.quicksum(
+			PP[i]*xp[i] + sp[i]*HP[i] + 
+			xr[i]*PR[i] + sr[i]*HR[i] + 
+			yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)), sense = GRB.MINIMIZE)
 
 		## Add constraints
 		model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
@@ -44,7 +47,7 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		
 		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
 		
 		model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
 	    
@@ -54,9 +57,9 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,1)
+		model.setParam(GRB.Param.Threads, 1)
 		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()
@@ -92,17 +95,20 @@ def clsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		model = gp.Model("CLSR_STD_LP")
 
 		# Create variables
-		xp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xp")
-		yp = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.CONTINUOUS, name="yp")
-		sp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sp")
-		xr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xr")
-		yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.CONTINUOUS, name="yr")
-		sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
+		xp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xp")
+		yp = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.CONTINUOUS, name="yp")
+		sp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sp")
+		xr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xr")
+		yr = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.CONTINUOUS, name="yr")
+		sr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sr")
 		
 		model.update()
 
 		## Set objective
-		model.setObjective(gp.quicksum(PP[i]*xp[i]+sp[i]*HP[i] + xr[i]*PR[i] + sr[i]*HR[i] + yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
+		model.setObjective(gp.quicksum(
+			PP[i]*xp[i] + sp[i]*HP[i] +
+			xr[i]*PR[i] + sr[i]*HR[i] + 
+			yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
 
 		## Add constraints
 
@@ -116,7 +122,7 @@ def clsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
 
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N))
 
 		model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
 	    
@@ -126,9 +132,9 @@ def clsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,1)
+		model.setParam(GRB.Param.Threads, 1)
 		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()
@@ -152,17 +158,20 @@ def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		model = gp.Model("ULSR_STD_MIP")
 
 		# Create variables
-		xp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xp")
-		yp = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yp")
-		sp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sp")
-		xr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xr")
-		yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yr")
-		sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
+		xp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xp")
+		yp = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.BINARY, name="yp")
+		sp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sp")
+		xr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xr")
+		yr = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.BINARY, name="yr")
+		sr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sr")
 		
 		model.update()
 
 		## Set objective
-		model.setObjective(gp.quicksum(PP[i]*xp[i]+sp[i]*HP[i] + xr[i]*PR[i] + sr[i]*HR[i] + yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
+		model.setObjective(gp.quicksum(
+			PP[i]*xp[i] + sp[i]*HP[i] + 
+			xr[i]*PR[i] + sr[i]*HR[i] +
+			yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
 
 		## Add constraints
 		model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
@@ -175,7 +184,7 @@ def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(xp[i] - yp[i]*SD[i][N-1] <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1]) <= 0 for i in range(N))
 
 		# export .lp
 	    #model.write(file_name+"_model.lp")
@@ -183,7 +192,7 @@ def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,1)
+		model.setParam(GRB.Param.Threads, 1)
 		model.setParam(GRB.Param.Cuts, -1)
 		model.setParam(GRB.Param.Presolve,-1)
 
@@ -214,20 +223,23 @@ def ulsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		model = gp.Model("ULSR_STD_LP")
 
 		# Create variables
-		xp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xp")
-		yp = model.addVars(list(range(N)), lb =0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yp")
-		sp = model.addVars(list(range(N)), lb =0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="sp")
-		xr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
-		yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
-		sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="sr")
+		xp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xp")
+		yp = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.CONTINUOUS, name="yp")
+		sp = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sp")
+		xr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="xr")
+		yr = model.addVars(list(range(N)), lb=0.0, ub=1.0, vtype=GRB.CONTINUOUS, name="yr")
+		sr = model.addVars(list(range(N)), lb=0.0, ub=float('inf'), vtype=GRB.CONTINUOUS, name="sr")
 		
 		model.update()
 
 		## Set objective
-		model.setObjective(gp.quicksum(PP[i]*xp[i]+sp[i]*HP[i] + xr[i]*PR[i] + sr[i]*HR[i] + yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
+		model.setObjective(gp.quicksum(
+			PP[i]*xp[i] + sp[i]*HP[i] + 
+			xr[i]*PR[i] + sr[i]*HR[i] + 
+			yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
 
 		## Add constraints
-		model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
+		model.addConstr(xp[0] + xr[0]-sp[0] == D[0])
 
 		model.addConstrs(sp[i-1] + xp[i] + xr[i] - sp[i] == D[i] for i in range(N) if i > 0 )
 		
@@ -237,7 +249,7 @@ def ulsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(xp[i] - yp[i]*SD[i][N-1] <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1]) <= 0 for i in range(N))
 
 		# export .lp
 	    #model.write(file_name+"_model.lp")
@@ -245,9 +257,9 @@ def ulsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,1)
+		model.setParam(GRB.Param.Threads, 1)
 		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()

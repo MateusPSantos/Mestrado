@@ -159,11 +159,11 @@ double optimization (double *CP, double *CR, double *FP, double *FR, double *D, 
       model.addConstr(ctr == 0);
     }
 
-    for (int i =0 ; i < N; i++){
+/*    for (int i =0 ; i < N; i++){
 
       model.addConstr(xp[i]+xr[i] <= Cap);
     }
-
+*/
 
 /*      for (int i=0; i < N; i++){
 
