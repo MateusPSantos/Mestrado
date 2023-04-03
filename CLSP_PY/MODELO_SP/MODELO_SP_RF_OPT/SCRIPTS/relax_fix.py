@@ -8,7 +8,6 @@ import numpy as np
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 
-
 def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 	zsp_sol1 = (np.zeros((N,N))).tolist()
@@ -39,7 +38,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
 	
 
-
 	try:
 
 		# Create a new model
@@ -53,9 +51,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
 		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
 		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
-
-
-
 
 		for i in range(N):
 			if i > max(particoes) :
@@ -96,33 +91,22 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		# # Add constraints
 
 		model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
-
 		
 		model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
-		
-		
+				
 		model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
-			
-		
-		
+
 		model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
-			
-			
-		
+					
 		model.addConstr(gp.quicksum(zr[0,j] for j in range(N)) +l[0]==1)
 
-			
-			
 		model.addConstrs(gp.quicksum(zr[i,t-1] for i in range(0,t)) == gp.quicksum(
 			 zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N))       
-			
-			
+						
 		model.addConstrs(gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N))    
 			
-
 		model.addConstrs(gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
 						  gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N))
-
 
 		model.addConstrs(gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N))
 		
@@ -131,11 +115,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		model.addConstrs((gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
 						   gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N))<= C for t in range(N)))
 		
-
-
-		
-	 
-
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
@@ -143,20 +122,14 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		model.setParam(GRB.Param.Cuts, -1)
 		model.setParam(GRB.Param.Presolve,-1)
 
-
-
-
 		# Optimize model
 		model.optimize()
-
-
 
 		objval = model.ObjVal
 		bestbound = model.ObjBound
 		numnode = model.NodeCount
 		elapsed = model.Runtime
 		gap = model.MIPGap
-
 
 		for i in range(N):
 			for j in range(i,N):
@@ -167,7 +140,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		l_sol1  = [l[i].X for i in range(N)]
 		yp_sol1 = [yp[i].X for i in range(N)]
 		yr_sol1 = [yr[i].X for i in range(N)]
-
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))

@@ -15,7 +15,6 @@ EPSILON = 0.000001
 ###                    CLSR MC MIP			                           ###    
 ######################################################################
 
-
 def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 	CSP = (np.zeros((N,N))).tolist()
@@ -30,8 +29,7 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 			CSR[i][j] = PR[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
 
 	for i in range(N):
-		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
-	
+		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))	
 
 	try:
 
@@ -103,8 +101,11 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
 			)
 
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+#			)
 		model.addConstrs(
-			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N)
 			)
 		
 		model.addConstrs(
@@ -142,7 +143,6 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 ###                    CLSR SP LP			                           ###    
 ######################################################################
 
-
 def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 	CSP = (np.zeros((N,N))).tolist()
@@ -158,7 +158,6 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 	for i in range(N):
 		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
-	
 
 	try:
 
@@ -221,9 +220,12 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 			)
 
 		model.addConstrs(
-			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
-			)
-		
+			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N)
+		)
+#		model.addConstrs(
+#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+#		)
+
 		model.addConstrs(
 			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*min(SR[0][i],SD[i][N-1]) for i in range(N)
 			)
@@ -255,7 +257,7 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 ###                    ULSR SP MIP     	                            ###    
 #######################################################################
 
-def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
+def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 	CSP = (np.zeros((N,N))).tolist()
 	CSR = (np.zeros((N,N))).tolist()
@@ -269,8 +271,7 @@ def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 			CSR[i][j] = PR[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
 
 	for i in range(N):
-		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
-	
+		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))	
 
 	try:
 
@@ -321,7 +322,7 @@ def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		model.addConstrs(
 			gp.quicksum(zr[i,t-1] for i in range(0,t)) == 
 			gp.quicksum(zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N)
-			)       
+			)
 				
 		model.addConstrs(
 			gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N)
@@ -365,7 +366,7 @@ def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 ###                    ULSR SP LP     	                            ###    
 #######################################################################
 
-def ulsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
+def ulsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 	CSP = (np.zeros((N,N))).tolist()
 	CSR = (np.zeros((N,N))).tolist()
@@ -443,6 +444,11 @@ def ulsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 			gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
 			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
 			)
+
+#		model.addConstrs(
+#			gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
+#			gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N)) <= C for t in range(N)
+#		)
 
 #		model.addConstrs(
 #			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N)

@@ -121,18 +121,13 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 				ctr+= vor[j,i]
 			for j in range(i,N):
 				ctr+=(-wr[i,j])
-
 			model.addConstr(ctr == 0)
-
 
 		for i in range(N):
 			ctr =0.0
 			for j in range(i,N):
 				ctr += vor[i,j]
-
 			model.addConstr(ctr <= R[i])
-
-
 
 		for i in range(N):
 			for j in range(i,N):
@@ -141,14 +136,11 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
 		for i in range(N):
 			for j in range(i,N):
-
-				model.addConstr(wr[i,j]+yr[i]*(-min(SR[0][i],D[j])) <=0)
-
+				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <=0)
 
 		for i in range(N):
 			for j in range(i,N):
-				model.addConstr(vor[i,j]+yr[j]*(-R[i]) <= 0)
-
+				model.addConstr(vor[i,j] + yr[j]*(-R[i]) <= 0)
 
 		for i in range(N):
 			ctr = 0.0 
@@ -157,22 +149,20 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 				ctr += (-wp[i,j])
 			model.addConstr(ctr == 0)
 
-
 		for i in range(N):
 			ctr = 0.0
 			ctr += xr[i]
 			for j in range(i,N):
 				ctr += (-wr[i,j])
-
 			model.addConstr(ctr == 0)
 
-		model.addConstrs(
-			xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N)
-			)
+#		model.addConstrs(
+#			xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N)
+#			)
 
-		model.addConstrs(
-			xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N)
-			)
+#		model.addConstrs(
+#			xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N)
+#			)
 
 		model.addConstrs(
 			xp[i] + xr[i] <= C for i in range(N)
@@ -306,7 +296,6 @@ def clsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 				ctr+= vor[j,i]
 			for j in range(i,N):
 				ctr+=(-wr[i,j])
-
 			model.addConstr(ctr == 0)
 
 
@@ -314,26 +303,19 @@ def clsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 			ctr =0.0
 			for j in range(i,N):
 				ctr += vor[i,j]
-
 			model.addConstr(ctr <= R[i])
-
-
 
 		for i in range(N):
 			for j in range(i,N):
 				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
 
+		for i in range(N):
+			for j in range(i,N):
+				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <=0)
 
 		for i in range(N):
 			for j in range(i,N):
-
-				model.addConstr(wr[i,j]+yr[i]*(-min(SR[0][i],D[j])) <=0)
-
-
-		for i in range(N):
-			for j in range(i,N):
-				model.addConstr(vor[i,j]+yr[j]*(-R[i]) <= 0)
-
+				model.addConstr(vor[i,j] + yr[j]*(-R[i]) <= 0)
 
 		for i in range(N):
 			ctr = 0.0 
@@ -342,24 +324,24 @@ def clsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 				ctr += (-wp[i,j])
 			model.addConstr(ctr == 0)
 
-
 		for i in range(N):
 			ctr = 0.0
 			ctr += xr[i]
 			for j in range(i,N):
 				ctr += (-wr[i,j])
-
 			model.addConstr(ctr == 0)
 
-		model.addConstrs(
-			xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N)
-			)
+#		model.addConstrs(
+#			xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N)
+#			)
 		
-		model.addConstrs(
-			xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N)
-			)
+#		model.addConstrs(
+#			xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N)
+#			)
 
-		model.addConstrs(xp[i]+xr[i] <= C for i in range(N))
+		model.addConstrs(
+			xp[i] + xr[i] <= C for i in range(N)
+			)
 
 #		if lsdbar == 1:
 #			model.addConstrs(
@@ -496,34 +478,25 @@ def ulsr_mc_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 				ctr+= vor[j,i]
 			for j in range(i,N):
 				ctr+=(-wr[i,j])
-
 			model.addConstr(ctr == 0)
-
 
 		for i in range(N):
 			ctr =0.0
 			for j in range(i,N):
 				ctr += vor[i,j]
-
 			model.addConstr(ctr <= R[i])
-
-
 
 		for i in range(N):
 			for j in range(i,N):
 				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
 
+		for i in range(N):
+			for j in range(i,N):
+				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <=0)
 
 		for i in range(N):
 			for j in range(i,N):
-
-				model.addConstr(wr[i,j]+yr[i]*(-min(SR[0][i],D[j])) <=0)
-
-
-		for i in range(N):
-			for j in range(i,N):
-				model.addConstr(vor[i,j]+yr[j]*(-R[i]) <= 0)
-
+				model.addConstr(vor[i,j] + yr[j]*(-R[i]) <= 0)
 
 		for i in range(N):
 			ctr = 0.0 
@@ -532,18 +505,12 @@ def ulsr_mc_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 				ctr += (-wp[i,j])
 			model.addConstr(ctr == 0)
 
-
 		for i in range(N):
 			ctr = 0.0
 			ctr += xr[i]
 			for j in range(i,N):
 				ctr += (-wr[i,j])
-
 			model.addConstr(ctr == 0)
-
-
-
-
 
 		'''
 
@@ -623,13 +590,13 @@ def ulsr_mc_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 ###                    ULSR	MC LP                                  ###    
 #######################################################################
 
-def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
+def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 	CP = [0]*N
 	CR = [0]*N
-	rrl = [0]*N
-	dl = [0]*N
-	sdl = (np.zeros((N,N))).tolist()
+#	rrl = [0]*N
+#	dl = [0]*N
+#	sdl = (np.zeros((N,N))).tolist()
 	KP = 0
 	KR = 0 
 
@@ -638,18 +605,18 @@ def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		for j in range(i,N):
 			CP[i] = CP[i] + HP[j]
 
-	for l in range(0,N):
-		if l < 1:
-			rrl[l] = R[l]
-		else:
-			rrl[l] = R[l] + max(0.0, rrl[l-1]-D[l-1])
+#	for l in range(0,N):
+#		if l < 1:
+#			rrl[l] = R[l]
+#		else:
+#			rrl[l] = R[l] + max(0.0, rrl[l-1]-D[l-1])
+#
+#		dl[l] = max(0.0,D[l]-rrl[l])
 
-		dl[l] = max(0.0,D[l]-rrl[l])
-
-	for k in range(0,N):
-		sdl[k][k] = dl[k]
-		for j in range(k+1,N):
-			sdl[k][j] = sdl[k][j-1] + dl[j]
+#	for k in range(0,N):
+#		sdl[k][k] = dl[k]
+#		for j in range(k+1,N):
+#			sdl[k][j] = sdl[k][j-1] + dl[j]
 
 	for i in range(N):
 		CR[i] = PR[i]
@@ -721,7 +688,6 @@ def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 				ctr+= vor[j,i]
 			for j in range(i,N):
 				ctr+=(-wr[i,j])
-
 			model.addConstr(ctr == 0)
 
 
@@ -729,26 +695,20 @@ def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 			ctr =0.0
 			for j in range(i,N):
 				ctr += vor[i,j]
-
 			model.addConstr(ctr <= R[i])
-
-
 
 		for i in range(N):
 			for j in range(i,N):
 				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
-
 
 		for i in range(N):
 			for j in range(i,N):
 
 				model.addConstr(wr[i,j]+yr[i]*(-min(SR[0][i],D[j])) <=0)
 
-
 		for i in range(N):
 			for j in range(i,N):
 				model.addConstr(vor[i,j]+yr[j]*(-R[i]) <= 0)
-
 
 		for i in range(N):
 			ctr = 0.0 
@@ -757,29 +717,16 @@ def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 				ctr += (-wp[i,j])
 			model.addConstr(ctr == 0)
 
-
 		for i in range(N):
 			ctr = 0.0
 			ctr += xr[i]
 			for j in range(i,N):
 				ctr += (-wr[i,j])
-
 			model.addConstr(ctr == 0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#		model.addConstrs(
+#			xp[i] + xr[i] <= C for i in range(N)
+#		)
 
 		'''
 
@@ -821,13 +768,12 @@ def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 #		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
 
-
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
-		#model.setParam(GRB.Param.MIPGap, EPSILON)
-		#model.setParam(GRB.Param.Threads, 1)
-		#model.setParam(GRB.Param.Cuts, -1)
-		#model.setParam(GRB.Param.Presolve, -1)
+		model.setParam(GRB.Param.MIPGap, EPSILON)
+		model.setParam(GRB.Param.Threads, 1)
+		model.setParam(GRB.Param.Cuts, -1)
+		model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()

@@ -11,23 +11,17 @@ import pandas as pd
 import sys
 from datetime import datetime, date
 
-
 #######################################################################
 ###                    PARAMETROS                                  ###    
 ######################################################################
-
-
 
 file_name = sys.argv[1]
 
 USE_FOP = True# Se usa o fix and optimize
 
-
 #######################################################################
 ###                    DIRETÓRIOS                                   ###    
 #######################################################################
-
-
 
 RESULT_PATH   = Path('../RESULTADOS/')
 RESULT_IND_PATH = Path('../RESULTADOS_INDIVIDUAIS/')
@@ -37,10 +31,7 @@ INSTANCE_PATH = Path('../../../../instances/c1sifa')
 ###                    VARIÁVEIS GLOBAIS                           ###    
 ######################################################################
 
-
 #Guarda solução
-
-
 
 objval = 0
 bestbound = 0
@@ -58,17 +49,13 @@ def timer(start_time=None):
 		temp_sec = (datetime.now() - start_time).total_seconds()
 		return temp_sec
 
-
 def main():
 
 #######################################################################
 ###                    LEITURA                                     ###    
 ######################################################################
 
-
-
 	N, PP, PR, FP, FR, HR, HP, D, R ,C= ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
-
 
 	rf_zsp_sol = (np.zeros((N,N))).tolist()
 	rf_zsr_sol = (np.zeros((N,N))).tolist()
@@ -77,7 +64,6 @@ def main():
 	rf_yp_sol = [0]*N
 	rf_yr_sol = [0]*N
 
-
 	fo_zsp_sol = (np.zeros((N,N))).tolist()
 	fo_zsr_sol = (np.zeros((N,N))).tolist()
 	fo_zr_sol = (np.zeros((N,N))).tolist()
@@ -85,16 +71,12 @@ def main():
 	fo_yp_sol = [0]*N
 	fo_yr_sol = [0]*N
 
-
 	zsp_sol = (np.zeros((N,N))).tolist()
 	zsr_sol = (np.zeros((N,N))).tolist()
 	zr_sol = (np.zeros((N,N))).tolist()
 	l_sol = [0]*N
 	yp_sol = [0]*N
 	yr_sol = [0]*N
-
-
-
 
 	SD = (np.zeros((N,N))).tolist()
 	SR = (np.zeros((N,N))).tolist()
@@ -104,10 +86,6 @@ def main():
 		for j in range(i+1, N):
 			SD[i][j] = SD[i][j-1] + D[j]
 			SR[i][j] = SR[i][j-1] + R[j]
-
-
-			
-
 	
 	subset = gera.gera_particoes(N)
 	print(subset)
@@ -124,7 +102,9 @@ def main():
 	fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol = rf_zsp_sol,rf_zsr_sol,rf_zr_sol,rf_l_sol,rf_yp_sol,rf_yr_sol
 
 	temp_opt = 0.0
+
 	if USE_FOP == True:
+
 		print("***********************************************************")
 		print("fix_and_optimize")
 		print("***********************************************************")
@@ -160,11 +140,10 @@ def main():
 	obj,bestbound,gap,temp,numnode,zsp_sol,zsr_sol,zr_sol,l_sol, yp_sol,yr_sol = opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol)
 	
 	temp_total = timer(start_rf)
-
-
 		
 	
 	if USE_FOP == True:
+
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table'+str(fator)+'.txt'),'a')
 		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_rf,3))+';'+str(round(fo_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
@@ -176,8 +155,6 @@ def main():
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
 		arquivo.close()
-
-
 
 
 if __name__== "__main__" :
