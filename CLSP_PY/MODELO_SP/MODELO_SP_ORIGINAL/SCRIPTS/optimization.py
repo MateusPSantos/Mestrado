@@ -120,9 +120,9 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, 3)
-		model.setParam(GRB.Param.Presolve,2)
+		model.setParam(GRB.Param.Threads, 1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()
@@ -239,8 +239,8 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads,1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
@@ -344,9 +344,9 @@ def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		model.setParam(GRB.Param.Threads, 1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
@@ -461,12 +461,9 @@ def ulsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-#		model.setParam(GRB.Param.Threads, 1) #3
-#		model.setParam(GRB.Param.Cuts, 3)
-#		model.setParam(GRB.Param.Presolve,2)
 		model.setParam(GRB.Param.Threads, 1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve, -1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()

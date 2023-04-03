@@ -37,7 +37,7 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 			yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)), sense = GRB.MINIMIZE)
 
 		## Add constraints
-		model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
+		model.addConstr(xp[0] + xr[0] - sp[0] == D[0])
 
 		model.addConstrs(sp[i-1] + xp[i] + xr[i] - sp[i] == D[i] for i in range(N) if i > 0 )
 		
@@ -45,7 +45,7 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 		
-		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1], C) <= 0 for i in range(N))
 		
 		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
 		
@@ -58,8 +58,8 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads, 1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve, -1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()
@@ -112,7 +112,7 @@ def clsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 		## Add constraints
 
-		model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
+		model.addConstr(xp[0] + xr[0] - sp[0] == D[0])
 
 		model.addConstrs(sp[i-1] + xp[i] + xr[i] - sp[i] == D[i] for i in range(N) if i > 0 )
 
@@ -120,9 +120,9 @@ def clsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 
-		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1], C) <= 0 for i in range(N))
 
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
 
 		model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
 	    
@@ -133,8 +133,8 @@ def clsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads, 1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve, -1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()
@@ -174,7 +174,7 @@ def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 			yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
 
 		## Add constraints
-		model.addConstr(xp[0]+xr[0]-sp[0] == D[0])
+		model.addConstr(xp[0] + xr[0] - sp[0] == D[0])
 
 		model.addConstrs(sp[i-1] + xp[i] + xr[i] - sp[i] == D[i] for i in range(N) if i > 0 )
 		
@@ -182,9 +182,9 @@ def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 		
-		model.addConstrs(xp[i] - yp[i]*SD[i][N-1] <= 0 for i in range(N))
+		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1], C) <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
 
 		# export .lp
 	    #model.write(file_name+"_model.lp")
@@ -193,8 +193,8 @@ def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads, 1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
@@ -239,7 +239,7 @@ def ulsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 			yp[i]*FP[i] + yr[i]*FR[i] for i in range(N)) , sense = GRB.MINIMIZE)
 
 		## Add constraints
-		model.addConstr(xp[0] + xr[0]-sp[0] == D[0])
+		model.addConstr(xp[0] + xr[0] - sp[0] == D[0])
 
 		model.addConstrs(sp[i-1] + xp[i] + xr[i] - sp[i] == D[i] for i in range(N) if i > 0 )
 		
@@ -247,9 +247,9 @@ def ulsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 		
-		model.addConstrs(xp[i] - yp[i]*SD[i][N-1] <= 0 for i in range(N))
+		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1], C) <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1]) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
 
 		# export .lp
 	    #model.write(file_name+"_model.lp")
@@ -258,8 +258,8 @@ def ulsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads, 1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve, -1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()

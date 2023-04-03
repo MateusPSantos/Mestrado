@@ -11,7 +11,7 @@
 # set08 {85..96}
 # set09 {97..108}
 
-for fo in STD SP MC
+for fo in STD
 do
 	cd ~/repository/Mestrado/CLSP_PY/MODELO_${fo}/MODELO_${fo}_ORIGINAL/SCRIPTS
 	bash execute_${fo}.sh
