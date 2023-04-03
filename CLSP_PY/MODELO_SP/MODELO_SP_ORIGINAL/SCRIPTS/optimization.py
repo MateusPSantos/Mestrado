@@ -103,13 +103,13 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
 			)
 
-#		model.addConstrs(
-#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
-#			)
+		model.addConstrs(
+			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+			)
 		
-#		model.addConstrs(
-#			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
-#			)
+		model.addConstrs(
+			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
+			)
 		
 		model.addConstrs(
 			gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) + 
@@ -220,13 +220,13 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
 			)
 
-#		model.addConstrs(
-#			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
-#			)
+		model.addConstrs(
+			gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+			)
 		
-#		model.addConstrs(
-#			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
-#			)
+		model.addConstrs(
+			gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*min(SR[0][i],SD[i][N-1]) for i in range(N)
+			)
 		
 		model.addConstrs(
 			gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
@@ -236,9 +236,9 @@ def clsr_sp_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, 3)
-		model.setParam(GRB.Param.Presolve,2)
+		model.setParam(GRB.Param.Threads,1)
+		model.setParam(GRB.Param.Cuts, -1)
+		model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
@@ -282,8 +282,8 @@ def ulsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
 		zr = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
 		l = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
-		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GGRB.CONTINUOUS, name="yp")
-		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="yr")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
 
 		## Set objective
 		FO = 0.0

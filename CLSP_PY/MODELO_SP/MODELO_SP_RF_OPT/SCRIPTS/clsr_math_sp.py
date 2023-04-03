@@ -20,7 +20,7 @@ from datetime import datetime, date
 
 file_name = sys.argv[1]
 
-USE_FOP = False# Se usa o fix and optimize
+USE_FOP = True# Se usa o fix and optimize
 
 
 #######################################################################
@@ -129,12 +129,33 @@ def main():
 		print("fix_and_optimize")
 		print("***********************************************************")
 		#subset = gera.gera_particoes(N,tamanho_particao=10,num_par_fix=2,indice_geracao=1)
+
+		fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed = rf_obj,rf_zsp_sol,rf_zsr_sol,rf_zr_sol,rf_l_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed
 		start_opt = timer()
 		for conj in subset:
-			fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed = fop.fix_and_optimize(conj,fo_yp_sol,fo_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol)
+			fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed = fop.fix_and_optimize(conj,fo_yp_melhor_sol,fo_yr_melhor_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol)
+
+			if fo_obj <= fo_melhor_obj:
+				fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed = fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed
+
+		'''
+		subset = gera.gera_particoes(N,indice_geracao=2)
+		subset2= []
+		for i in range(len(subset)-1):
+			for j in range(i+1,len(subset)-1):
+				subset2.append(list(np.unique(subset[i]+subset[j])))
+
+		for conj in subset2:
+			print(conj)
+			fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed = fop.fix_and_optimize(conj,fo_yp_melhor_sol,fo_yr_melhor_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol)
+
+			if fo_obj < fo_melhor_obj:
+				fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed = fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed
+		'''
 
 		temp_opt = timer(start_opt)
 
+	fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed = fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed
 
 	obj,bestbound,gap,temp,numnode,zsp_sol,zsr_sol,zr_sol,l_sol, yp_sol,yr_sol = opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol)
 	

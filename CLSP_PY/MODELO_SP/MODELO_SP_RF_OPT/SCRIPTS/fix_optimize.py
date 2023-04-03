@@ -1,7 +1,7 @@
 
 import gurobipy as gp
 from gurobipy import GRB
-
+import numpy as np
 
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
@@ -90,14 +90,15 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
         model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
 
         
-        model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
+        model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) -
+         gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
         
         
-        model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
+        model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N)  ) <= yp[t] for t in range(N))
             
         
         
-        model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
+        model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) ) <= yr[t] for t in range(N))
             
             
         
