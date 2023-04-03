@@ -82,7 +82,7 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		#FO = None
 		#for i in range(N):
 		#	FO += yp[i]*FP[i] + yr[i]*FR[i] + l[i]*CL[i] + gp.quicksum(zsp[i,j]*CSP[i][j] + zsr[i,j]*CSR[i][j]+
-																	   zr[i,j]*CR[i][j] for j in range(i,N))
+	#																   zr[i,j]*CR[i][j] for j in range(i,N))
 
 		FO = None
 		for i in range(N):
