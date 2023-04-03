@@ -45,9 +45,9 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 		
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 		
-		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1], C) <= 0 for i in range(N))
+		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1],C) <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N))
 		
 		model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
 	    
