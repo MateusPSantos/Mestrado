@@ -137,20 +137,20 @@ def main():
 
 	fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed = fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed
 
-	obj,bestbound,gap,temp,numnode,zsp_sol,zsr_sol,zr_sol,l_sol, yp_sol,yr_sol = opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol)
+	obj,bestbound,gap,temp,numnode = opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol)
 	
 	temp_total = timer(start_rf)
 		
 	
 	if USE_FOP == True:
 
-		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table'+str(fator)+'.txt'),'a')
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_SP_relax_and_opt_table.txt'),'a')
 		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_rf,3))+';'+str(round(fo_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
 		arquivo.close()
 	else :
-		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table'+str(fator)+'.txt'),'a')
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table.txt'),'a')
 		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
 					'\n')
