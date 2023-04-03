@@ -78,10 +78,13 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
         model.update()
 
         # # Set objective
+
         FO = None
         for i in range(N):
-            FO += yp[i]*FP[i] + yr[i]*FR[i] + l[i]*CL[i] + gp.quicksum(zsp[i,j]*CSP[i][j] + zsr[i,j]*CSR[i][j]+
-                                                                       zr[i,j]*CR[i][j] for j in range(i,N))
+            FO += yp[i]*FP[i] + yr[i]*FR[i] + l[i]*CL[i] 
+            
+            for j in range(i,N):
+                FO+=zsp[i,j]*CSP[i][j] + zsr[i,j]*CSR[i][j]+zr[i,j]*CR[i][j] 
 
         model.setObjective(FO, sense = GRB.MINIMIZE)
 
