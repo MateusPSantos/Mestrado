@@ -19,6 +19,11 @@ from datetime import datetime, date
 
 
 file_name = sys.argv[1]
+tam_particao = int(sys.argv[2]) # Tamanho das partições
+num_fix = int(sys.argv[3]) # número de variáveis que serão fixadas 
+
+
+
 USE_FOP = True# Se usa o fix and optimize
 
 
@@ -100,7 +105,7 @@ def main():
 
 			
 	
-	subset = gera.gera_particoes(N)
+	subset = gera.gera_particoes(N,tamanho_particao = tam_particao,num_par_fix= num_fix)
 
 	start_rf = timer()
 	for conj in subset:
@@ -112,7 +117,7 @@ def main():
 	
 	temp_opt = 0.0
 	if USE_FOP == True:
-		#subset = gera.gera_particoes(N,tamanho_particao=10,num_par_fix=2,indice_geracao=1)
+
 		start_opt = timer()
 		for conj in subset:
 			rf_obj,rf_xp_sol,rf_xr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = fop.fix_and_optimize(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol)
@@ -121,22 +126,17 @@ def main():
 
 
 	temp_total = timer(start_rf)
-	obj,bestbound,gap,temp,numnode = opt.clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_yp_sol,rf_yr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol)
-	
-
-
-		
 	
 	if USE_FOP == True:
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_MC_relax_and_opt_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
-					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
+		arquivo.write(file_name+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+\
+					';'+str(round(temp_total,3))+
 					'\n')
 		arquivo.close()
 	else :
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_MC_relax_fix_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
-					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+
+		arquivo.write(file_name+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+\
+					';'+str(round(temp,3))+';'+str(round(temp_total,3))+
 					'\n')
 		arquivo.close()
 

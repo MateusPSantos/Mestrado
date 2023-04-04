@@ -90,30 +90,56 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 
 		# # Add constraints
 
-		model.addConstr(gp.quicksum(zsp[0,j]+zsr[0,j] for j in range(N)) ==1)
+		model.addConstr(
+			gp.quicksum(zsp[0,j] + zsr[0,j] for j in range(N)) ==1
+			)
 		
-		model.addConstrs(gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) )
+		model.addConstrs(
+			gp.quicksum(zsp[i,t-1] + zsr[i,t-1] for i in range(t)) - 
+			gp.quicksum(zsp[t,j] + zsr[t,j] for j in range(t, N)) == 0  for t in range(1,N) 
+			)
 				
-		model.addConstrs(gp.quicksum(zsp[t,j] for j in range(t,N) if SD[t][j] > 0.0 ) <= yp[t] for t in range(N))
-
-		model.addConstrs(gp.quicksum(zsr[t,j] for j in range(t,N) if SD[t][j] > 0.0) <= yr[t] for t in range(N))
-					
-		model.addConstr(gp.quicksum(zr[0,j] for j in range(N)) +l[0]==1)
-
-		model.addConstrs(gp.quicksum(zr[i,t-1] for i in range(0,t)) == gp.quicksum(
-			 zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N))       
-						
-		model.addConstrs(gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N))    
+		model.addConstrs(
+			gp.quicksum(zsp[t,j] for j in range(t,N)) <= yp[t] for t in range(N)
+			)
 			
-		model.addConstrs(gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
-						  gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N))
+		model.addConstrs(
+			gp.quicksum(zsr[t,j] for j in range(t,N)) <= yr[t] for t in range(N)
+			)
+			
+		model.addConstr(
+			gp.quicksum(zr[0,j] for j in range(N)) + l[0]==1
+			)
+					
+		model.addConstrs(
+			gp.quicksum(zr[i,t-1] for i in range(0,t)) == 
+			gp.quicksum(zr[t,j]  for j in  range(t,N)) + l[t] for t in range(1,N)
+			)       
+				
+		model.addConstrs(
+			gp.quicksum(zr[i,t] for i in range(0,t+1)) <= yr[t] for t in range(N)
+			)    
+			
+		model.addConstrs(
+			gp.quicksum(SR[i][t]*zr[i,t] for i in range(t+1) ) ==
+			gp.quicksum(SD[t][j]*zsr[t,j] for j in range(t,N)) for t in range(N)
+			)
 
-		model.addConstrs(gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N))
+#       model.addConstrs(
+#           gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*min(C,SD[i][N-1]) for i in range(N)
+#           )
+	  # model.addConstrs(
+	   #     gp.quicksum(SD[i][t]*zsp[i,t] for t in range(i,N)) <= yp[i]*SD[i][N-1] for i in range(N)
+		#    )
 		
-		model.addConstrs(gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*min(SR[0][i],SD[i][N-1]) for i in range(N))
+		#model.addConstrs(
+		#    gp.quicksum(SD[i][t]*zsr[i,t] for t in range(i,N)) <= yr[i]*SD[i][N-1] for i in range(N)
+		 #   )
 		
-		model.addConstrs((gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) +
-						   gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N))<= C for t in range(N)))
+		model.addConstrs(
+			gp.quicksum(SD[t][k]*zsp[t,k] for k in range(t,N)) + 
+			gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N)) <= C for t in range(N)
+			)
 		
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)

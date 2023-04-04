@@ -8,7 +8,7 @@ from gurobipy import GRB
 
 
 
-MAX_CPU_TIME = 600.0
+MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 cap = True
 
@@ -82,6 +82,9 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		yr_sol = [yr[i].X for i in range(N)]
 
 
+		tmp=0
+		if model.status == GRB.OPTIMAL:
+			tmp=1
 
 
 		print('Obj: %g' % model.ObjVal)
@@ -90,4 +93,4 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
 	return model.ObjVal, model.ObjBound,model.MIPGap,model.Runtime, model.NodeCount, \
-				xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol
+				xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol,tmp

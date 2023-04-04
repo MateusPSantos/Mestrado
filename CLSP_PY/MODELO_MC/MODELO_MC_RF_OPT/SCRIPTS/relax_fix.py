@@ -129,27 +129,65 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		model.setObjective(FO, sense = GRB.MINIMIZE)
 		# # Add constraints
 	
-		model.addConstrs(gp.quicksum(wp[j,i]+wr[j,i] for j in range(i+1)) >= D[i] for i in range(N))
+		for i in range(N):
+			ctr = 0.0
+			for j in range(i+1):
+				ctr += wp[j,i]
+				ctr += wr[j,i]
+			model.addConstr(ctr >= D[i])
 
-		model.addConstrs(gp.quicksum(vor[j,i] for j in range(i+1)) + gp.quicksum((-wr[i,j]) for j in range(i,N))
-									>= 0 for i in range(N)
-									)
-		model.addConstrs(gp.quicksum(vor[i,j] for j in range(i,N)) <= R[i] for i in range(N))
+		for i in range(N):
+			ctr = 0.0
+			for j in range(i+1):
+				ctr+= vor[j,i]
+			for j in range(i,N):
+				ctr+=(-wr[i,j])
+			model.addConstr(ctr == 0)
 
-		model.addConstrs(wp[i,j] <= yp[i]*D[j]  for i in range(N) for j in range(i,N) )
+		for i in range(N):
+			ctr =0.0
+			for j in range(i,N):
+				ctr += vor[i,j]
+			model.addConstr(ctr <= R[i])
 
-		model.addConstrs(wr[i,j] <= min(SR[0][i],D[i])  for j in range(i,N) for i in range(N) )
+		for i in range(N):
+			for j in range(i,N):
+				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
 
-		model.addConstrs(vor[i,j] + yr[j]*(-R[i])  <= 0 for j in range(i,N) for i in range(N))
 
-		model.addConstrs(xp[i]+ gp.quicksum((-wp[i,j]) for j in range(i,N)) == 0 for i in range(N))
+		for i in range(N):
+			for j in range(i,N):
+				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <=0)
 
-		model.addConstrs(xr[i]+ gp.quicksum((-wr[i,j]) for j in range(i,N)) == 0 for i in range(N))
+		for i in range(N):
+			for j in range(i,N):
+				model.addConstr(vor[i,j] + yr[j]*(-R[i]) <= 0)
 
-		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1], C) <= 0 for i in range(N))
+		for i in range(N):
+			ctr = 0.0 
+			ctr += xp[i]
+			for j in range(i,N):
+				ctr += (-wp[i,j])
+			model.addConstr(ctr == 0)
 
-		model.addConstrs(xp[i]+xr[i] <= C for i in range(N))
+		for i in range(N):
+			ctr = 0.0
+			ctr += xr[i]
+			for j in range(i,N):
+				ctr += (-wr[i,j])
+			model.addConstr(ctr == 0)
+
+#		model.addConstrs(
+#			xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N)
+#			)
+
+#		model.addConstrs(
+#			xr[i] - yr[i]*min(SR[0][i],SD[i][N-1],C) <= 0 for i in range(N)
+#			)
+
+		model.addConstrs(
+			xp[i] + xr[i] <= C for i in range(N)
+			)
 		#model.write(file_name+".lp")
 
 		# Parameters 

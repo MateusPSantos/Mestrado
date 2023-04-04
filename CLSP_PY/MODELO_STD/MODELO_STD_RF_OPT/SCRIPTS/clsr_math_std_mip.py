@@ -101,6 +101,7 @@ def main():
 
 
 			
+	
 	subset = gera.gera_particoes(N,tamanho_particao = tam_particao,num_par_fix= num_fix)
 
 
@@ -123,21 +124,23 @@ def main():
 		temp_opt = timer(start_opt)
 
 
+	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol,tmp = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol)
+	
 	temp_total = timer(start_rf)
 
 
 		
 	
 	if USE_FOP == True:
-		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+\
-					+';'+str(round(temp_total,3))+
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table_mip.txt'),'a')
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
+					';'+str(round(gap,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+';'+str(tmp)+
 					'\n')
 		arquivo.close()
 	else :
-		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+\
-					';'+str(round(temp_opt,3))+';'+str(round(temp_total,3))+
+		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table_mip.txt'),'a')
+		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(bestbound,3))+\
+					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+';'+str(tmp)+
 					'\n')
 		arquivo.close()
 
