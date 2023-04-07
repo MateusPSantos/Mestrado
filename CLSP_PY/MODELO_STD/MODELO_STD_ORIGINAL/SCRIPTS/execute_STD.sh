@@ -15,7 +15,7 @@ solver=mip
 # set08 {85..96}
 # set09 {97..108}
 
-for id in {13..24} #$(seq 108)
+for id in {25..36} #$(seq 108)
 do
 	python3 ${prob}_${fo}_${solver}.py c52_${id}.txt >> report/out_${prob}_${fo}_${solver}_c52_${id}.txt
 done
