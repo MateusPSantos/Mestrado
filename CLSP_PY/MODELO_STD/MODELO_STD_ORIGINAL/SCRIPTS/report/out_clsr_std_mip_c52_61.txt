@@ -1,0 +1,76 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2024-02-22
+Warning: Gurobi version mismatch between Python 9.5.0 and C library 9.5.2
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Gurobi Optimizer version 9.5.2 build v9.5.2rc0 (linux64)
+Thread count: 4 physical cores, 4 logical processors, using up to 1 threads
+Optimize a model with 260 rows, 312 columns and 674 nonzeros
+Model fingerprint: 0x913a3eca
+Variable types: 208 continuous, 104 integer (104 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+02]
+  Objective range  [2e-01, 2e+03]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [2e+01, 2e+02]
+Found heuristic solution: objective 62016.200000
+Presolve removed 5 rows and 5 columns
+Presolve time: 0.00s
+Presolved: 255 rows, 307 columns, 667 nonzeros
+Variable types: 204 continuous, 103 integer (103 binary)
+
+Root relaxation: objective 2.408410e+04, 223 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 24084.0963    0   50 62016.2000 24084.0963  61.2%     -    0s
+H    0     0                    33787.800000 24084.0963  28.7%     -    0s
+H    0     0                    32835.800000 24084.0963  26.7%     -    0s
+     0     0 25983.7679    0   48 32835.8000 25983.7679  20.9%     -    0s
+H    0     0                    32479.800000 25983.7679  20.0%     -    0s
+     0     0 26660.7854    0   47 32479.8000 26660.7854  17.9%     -    0s
+H    0     0                    28981.800000 26660.7854  8.01%     -    0s
+     0     0 26701.7547    0   42 28981.8000 26701.7547  7.87%     -    0s
+     0     0 26710.4679    0   43 28981.8000 26710.4679  7.84%     -    0s
+     0     0 26711.1834    0   43 28981.8000 26711.1834  7.83%     -    0s
+     0     0 26803.1275    0   42 28981.8000 26803.1275  7.52%     -    0s
+H    0     0                    27965.800000 26803.1275  4.16%     -    0s
+     0     0 26856.2356    0   43 27965.8000 26856.2356  3.97%     -    0s
+     0     0 26862.0018    0   47 27965.8000 26862.0018  3.95%     -    0s
+     0     0 26863.6115    0   48 27965.8000 26863.6115  3.94%     -    0s
+     0     0 26912.1069    0   52 27965.8000 26912.1069  3.77%     -    0s
+     0     0 26933.4919    0   53 27965.8000 26933.4919  3.69%     -    0s
+     0     0 26942.3475    0   49 27965.8000 26942.3475  3.66%     -    0s
+     0     0 26943.2036    0   54 27965.8000 26943.2036  3.66%     -    0s
+     0     0 26956.0232    0   53 27965.8000 26956.0232  3.61%     -    0s
+     0     0 26963.0744    0   50 27965.8000 26963.0744  3.59%     -    0s
+     0     0 26965.6243    0   53 27965.8000 26965.6243  3.58%     -    0s
+     0     0 26966.1345    0   52 27965.8000 26966.1345  3.57%     -    0s
+     0     0 26983.1767    0   46 27965.8000 26983.1767  3.51%     -    0s
+     0     0 26986.6030    0   53 27965.8000 26986.6030  3.50%     -    0s
+     0     0 26989.6140    0   52 27965.8000 26989.6140  3.49%     -    0s
+     0     0 26989.6140    0   52 27965.8000 26989.6140  3.49%     -    0s
+     0     2 26990.6410    0   52 27965.8000 26990.6410  3.49%     -    0s
+H   54    35                    27420.800000 27003.2555  1.52%   5.2    0s
+H  247   119                    27371.800000 27029.4561  1.25%   7.6    0s
+H  519   185                    27266.400000 27074.0826  0.71%   8.2    0s
+H 1115   261                    27256.800000 27124.8091  0.48%   8.9    0s
+* 1116   250              24    27247.800000 27124.8091  0.45%   8.9    0s
+
+Cutting planes:
+  Gomory: 1
+  Cover: 1
+  Implied bound: 7
+  MIR: 143
+  Flow cover: 142
+
+Explored 2489 nodes (22409 simplex iterations) in 1.16 seconds (0.85 work units)
+Thread count was 1 (of 4 available processors)
+
+Solution count 10: 27247.8 27266.4 27371.8 ... 62016.2
+
+Optimal solution found (tolerance 1.00e-06)
+Best objective 2.724780000000e+04, best bound 2.724780000000e+04, gap 0.0000%
+Obj: 27247.8
