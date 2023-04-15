@@ -3,13 +3,16 @@
 
 
 def leitura_instance(file_name):
-	arq = open(file_name)
-	N = int(arq.readline())
-	PP  = [0]*N
-	PR  = [0]*N
 
-	FP = [float(arq.readline())]*N
+	arq = open(file_name)
+
+	N = int(arq.readline())
+
+	PR  = [0]*N
+	PP  = [0]*N
+
 	FR = [float(arq.readline())]*N
+	FP = [float(arq.readline())]*N
 
 	HR = [float(arq.readline())]*N
 	HP = [float(arq.readline())]*N
