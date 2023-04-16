@@ -17,7 +17,7 @@ EPSILON = 0.000001
 ###                    CLSR MC MIP		                            ###    
 #######################################################################
 
-def clsr_mc_mip(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
+def clsr_mc(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
 
 	CP = [0]*N
 	CR = [0]*N
