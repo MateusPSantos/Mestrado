@@ -1,0 +1,39 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Gurobi Optimizer version 9.5.2 build v9.5.2rc0 (linux64)
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+Optimize a model with 468 rows, 4290 columns and 20826 nonzeros
+Model fingerprint: 0x9d6134c8
+Variable types: 4186 continuous, 104 integer (104 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+03]
+  Objective range  [1e+01, 1e+05]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+02]
+Presolve removed 103 rows and 1 columns
+Presolve time: 0.04s
+Presolved: 365 rows, 4289 columns, 18016 nonzeros
+Variable types: 4186 continuous, 103 integer (103 binary)
+Found heuristic solution: objective 130004.00000
+
+Root relaxation: objective 2.649835e+04, 1305 iterations, 0.03 seconds (0.05 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 26498.3524    0   52 130004.000 26498.3524  79.6%     -    0s
+H    0     0                    57858.138458 26498.3524  54.2%     -    0s
+H    0     0                    52159.792209 26498.3524  49.2%     -    0s
+     0     0 27180.5376    0   60 52159.7922 27180.5376  47.9%     -    0s
+H    0     0                    49910.543057 27180.5376  45.5%     -    0s
+     0     0 27262.5594    0   61 49910.5431 27262.5594  45.4%     -    0s
+     0     0 27264.7265    0   59 49910.5431 27264.7265  45.4%     -    0s
+     0     0 27264.7534    0   59 49910.5431 27264.7534  45.4%     -    0s
+     0     0 27723.8217    0   73 49910.5431 27723.8217  44.5%     -    0s
+     0     0 27783.1309    0   73 49910.5431 27783.1309  44.3%     -    0s
+     0     0 27786.8744    0   71 49910.5431 27786.8744  44.3%     -    0s
+     0     0 27787.1958    0   71 49910.5431 27787.1958  44.3%     -    0s
+     0     0 28095.1116    0   73 49910.5431 28095.1116  43.7%     -    0s

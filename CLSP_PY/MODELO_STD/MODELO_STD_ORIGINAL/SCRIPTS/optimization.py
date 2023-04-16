@@ -3,8 +3,8 @@ import gurobipy as gp
 from gurobipy import GRB
 
 #######################################################################
-###                    PARAMETROS                                  ###    
-######################################################################
+###                    PARAMETROS                                   ###    
+#######################################################################
 
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
@@ -148,8 +148,8 @@ def clsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 
 
 #######################################################################
-###                    ULSR STD MIP			                           ###    
-######################################################################
+###                    ULSR STD MIP			                        ###    
+#######################################################################
 
 def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 	try:
@@ -182,9 +182,9 @@ def ulsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 		
-		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1], C) <= 0 for i in range(N))
+		model.addConstrs(xp[i] - yp[i]*SD[i][N-1] <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1]) <= 0 for i in range(N))
 
 		# export .lp
 	    #model.write(file_name+"_model.lp")
@@ -247,9 +247,9 @@ def ulsr_std_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 		
 		model.addConstrs(sr[i-1] + R[i] - xr[i] - sr[i] == 0 for i in range(N) if i > 0)
 		
-		model.addConstrs(xp[i] - yp[i]*min(SD[i][N-1], C) <= 0 for i in range(N))
+		model.addConstrs(xp[i] - yp[i]*SD[i][N-1] <= 0 for i in range(N))
 		
-		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1], C) <= 0 for i in range(N))
+		model.addConstrs(xr[i] - yr[i]*min(SR[0][i],SD[i][N-1]) <= 0 for i in range(N))
 
 		# export .lp
 	    #model.write(file_name+"_model.lp")

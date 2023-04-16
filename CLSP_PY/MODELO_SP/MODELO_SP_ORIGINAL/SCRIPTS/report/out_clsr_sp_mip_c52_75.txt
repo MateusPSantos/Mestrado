@@ -969,3 +969,38 @@ Time limit reached
 Warning: max constraint violation (2.4193e-05) exceeds tolerance
 Best objective 5.338759974550e+04, best bound 5.178023573361e+04, gap 3.0107%
 Obj: 53387.6
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Gurobi Optimizer version 9.5.2 build v9.5.2rc0 (linux64)
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+Optimize a model with 468 rows, 4290 columns and 20826 nonzeros
+Model fingerprint: 0x6e694709
+Variable types: 4186 continuous, 104 integer (104 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+03]
+  Objective range  [3e+00, 1e+05]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+02]
+Presolve removed 103 rows and 1 columns
+Presolve time: 0.04s
+Presolved: 365 rows, 4289 columns, 18016 nonzeros
+Variable types: 4186 continuous, 103 integer (103 binary)
+Found heuristic solution: objective 114407.00000
+
+Root relaxation: objective 1.508034e+04, 1229 iterations, 0.03 seconds (0.03 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 15080.3388    0   58 114407.000 15080.3388  86.8%     -    0s
+H    0     0                    35305.145718 15080.3388  57.3%     -    0s
+H    0     0                    26674.943029 15080.3388  43.5%     -    0s
+H    0     0                    26593.164720 15080.3388  43.3%     -    0s
+     0     0 15359.4763    0   58 26593.1647 15359.4763  42.2%     -    0s
+H    0     0                    24338.674457 15359.4763  36.9%     -    0s
+     0     0 15373.8509    0   56 24338.6745 15373.8509  36.8%     -    0s
+     0     0 15376.7108    0   57 24338.6745 15376.7108  36.8%     -    0s
+     0     0 15619.5315    0   57 24338.6745 15619.5315  35.8%     -    0s

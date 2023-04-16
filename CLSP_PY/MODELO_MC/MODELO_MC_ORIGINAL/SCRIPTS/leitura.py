@@ -23,4 +23,4 @@ def leitura_instance(file_name):
 
 	C = float(arq.readline().rstrip('\n'))
 	
-	return N, PP, PR, FP, FR, HR, HP, D, R, C
+	return N, PR, PP, FR, FP, HR, HP, D, R, C

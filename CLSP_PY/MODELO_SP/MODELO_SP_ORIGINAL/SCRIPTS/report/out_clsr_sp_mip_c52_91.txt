@@ -1,0 +1,31 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Gurobi Optimizer version 9.5.2 build v9.5.2rc0 (linux64)
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+Optimize a model with 468 rows, 4290 columns and 20826 nonzeros
+Model fingerprint: 0x97f58324
+Variable types: 4186 continuous, 104 integer (104 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+03]
+  Objective range  [7e+00, 1e+05]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+02]
+Presolve removed 103 rows and 1 columns
+Presolve time: 0.04s
+Presolved: 365 rows, 4289 columns, 18016 nonzeros
+Variable types: 4186 continuous, 103 integer (103 binary)
+Found heuristic solution: objective 130013.00000
+
+Root relaxation: objective 2.324650e+04, 1316 iterations, 0.04 seconds (0.05 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 23246.4957    0   50 130013.000 23246.4957  82.1%     -    0s
+H    0     0                    52324.530389 23246.4957  55.6%     -    0s
+H    0     0                    45538.171818 23246.4957  49.0%     -    0s
+H    0     0                    45231.946047 23246.4957  48.6%     -    0s
+     0     0 23762.1305    0   55 45231.9460 23762.1305  47.5%     -    0s

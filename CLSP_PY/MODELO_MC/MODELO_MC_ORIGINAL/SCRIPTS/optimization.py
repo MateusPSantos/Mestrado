@@ -17,7 +17,7 @@ EPSILON = 0.000001
 ###                    CLSR MC MIP		                            ###    
 #######################################################################
 
-def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
+def clsr_mc_mip(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
 
 	CP = [0]*N
 	CR = [0]*N
@@ -197,7 +197,7 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 ###                    CLSR MC LP		                           ###    
 #######################################################################
 
-def clsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
+def clsr_mc_lp(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
 
 	CP = [0]*N
 	CR = [0]*N
@@ -373,7 +373,7 @@ def clsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 ###                    ULSR	MC MIP                                  ###    
 #######################################################################
 
-def ulsr_mc_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
+def ulsr_mc_mip(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
 
 	CP = [0]*N
 	CR = [0]*N
@@ -590,7 +590,7 @@ def ulsr_mc_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR):
 ###                    ULSR	MC LP                                  ###    
 #######################################################################
 
-def ulsr_mc_lp(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
+def ulsr_mc_lp(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
 
 	CP = [0]*N
 	CR = [0]*N
