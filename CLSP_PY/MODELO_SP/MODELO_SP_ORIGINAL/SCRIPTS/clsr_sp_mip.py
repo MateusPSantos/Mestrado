@@ -58,7 +58,7 @@ def main():
 			SD[i][j] = SD[i][j-1] + D[j]
 			SR[i][j] = SR[i][j-1] + R[j]
 
-	obj,bestbound,gap,temp,numnode,tmp = opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+	obj,bestbound,gap,temp,numnode,tmp = opt.clsr_sp_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		
 	arquivo = open(os.path.join(RESULT_PATH,'clsr_sp_mip.txt'),'a')
 	arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(bestbound,3))+\

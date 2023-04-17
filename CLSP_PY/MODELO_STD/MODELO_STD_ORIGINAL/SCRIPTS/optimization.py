@@ -14,7 +14,7 @@ EPSILON = 0.000001
 ###                    CLSR STD MIP		                            ###    
 #######################################################################
 
-def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
+def clsr_std_mip(N, PP, PR, FP, FR, HR, HP, D, R, SD, SR, C):
 	try:
 
 		# Create a new model
