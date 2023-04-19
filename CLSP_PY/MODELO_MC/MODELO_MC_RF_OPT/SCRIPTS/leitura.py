@@ -8,8 +8,9 @@ def leitura_instance(file_name):
 	PP  = [0]*N
 	PR  = [0]*N
 
-	FP = [float(arq.readline())]*N
 	FR = [float(arq.readline())]*N
+	FP = [float(arq.readline())]*N
+	
 
 	HR = [float(arq.readline())]*N
 	HP = [float(arq.readline())]*N
