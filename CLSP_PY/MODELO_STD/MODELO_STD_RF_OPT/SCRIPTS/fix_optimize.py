@@ -2,10 +2,8 @@
 import gurobipy as gp
 from gurobipy import GRB
 
-
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
-
 
 def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_sol):
 
@@ -31,7 +29,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
         xr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xr")
         yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yr")
         sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
-
       
         for i in range(N):
             if i not in particoes:
@@ -47,8 +44,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
             xr[i].start = xr_sol[i]
             sp[i].start = sp_sol[i]
             sr[i].start = sr_sol[i]
-
-
         
         model.update()
         # # Set objective
@@ -72,8 +67,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
         model.setParam(GRB.Param.Cuts, -1)
         model.setParam(GRB.Param.Presolve,-1)
 
-
-
         # Optimize model
         model.optimize()
 
@@ -83,9 +76,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
         sr_sol = [sr[i].X for i in range(N)]
         yp_sol = [yp[i].X for i in range(N)]
         yr_sol = [yr[i].X for i in range(N)]
-
-
-
 
         print('Obj: %g' % model.ObjVal)
 

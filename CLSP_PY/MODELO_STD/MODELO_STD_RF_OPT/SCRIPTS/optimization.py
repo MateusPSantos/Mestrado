@@ -6,20 +6,13 @@ from gurobipy import GRB
 ###                    PARAMETROS                                  ###    
 ######################################################################
 
-
-
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 cap = True
 
-
-
-
-
 #######################################################################
 ###                    MODELO			                           ###    
 ######################################################################
-
 
 def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_sol,yp_sol ,yr_sol):
 
@@ -36,7 +29,6 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		xr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="xr")
 		yr = model.addVars(list(range(N)), lb =0.0, ub = 1.0,vtype=GRB.BINARY, name="yr")
 		sr = model.addVars(list(range(N)), lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="sr")
-
 	  
 		for i in range(N):
 			xp[i].start = xp_sol[i]
@@ -69,8 +61,6 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		model.setParam(GRB.Param.Cuts, -1)
 		model.setParam(GRB.Param.Presolve,-1)
 
-
-
 		# Optimize model
 		model.optimize()
 
@@ -81,11 +71,9 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		yp_sol = [yp[i].X for i in range(N)]
 		yr_sol = [yr[i].X for i in range(N)]
 
-
 		tmp=0
 		if model.status == GRB.OPTIMAL:
 			tmp=1
-
 
 		print('Obj: %g' % model.ObjVal)
 

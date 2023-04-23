@@ -24,7 +24,7 @@ num_fix = int(sys.argv[3]) # número de variáveis que serão fixadas
 
 
 
-USE_FOP = True# Se usa o fix and optimize
+USE_FOP = True # Se usa o fix and optimize
 
 
 #######################################################################

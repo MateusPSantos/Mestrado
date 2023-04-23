@@ -11,26 +11,19 @@ import pandas as pd
 import sys
 from datetime import datetime, date
 
-
 #######################################################################
 ###                    PARAMETROS                                  ###    
 ######################################################################
-
-
 
 file_name = sys.argv[1]
 tam_particao = int(sys.argv[2]) # Tamanho das partições
 num_fix = int(sys.argv[3]) # número de variáveis que serão fixadas 
 
-
-USE_FOP = True# Se usa o fix and optimize
-
+USE_FOP = True #se usa o fix and optimize
 
 #######################################################################
 ###                    DIRETÓRIOS                                   ###    
 #######################################################################
-
-
 
 RESULT_PATH   = Path('../RESULTADOS/')
 RESULT_IND_PATH = Path('../RESULTADOS_INDIVIDUAIS/')
@@ -40,10 +33,7 @@ INSTANCE_PATH = Path('../../../../instances/c1sifa')
 ###                    VARIÁVEIS GLOBAIS                           ###    
 ######################################################################
 
-
 #Guarda solução
-
-
 
 objval = 0
 bestbound = 0
@@ -61,14 +51,11 @@ def timer(start_time=None):
 		temp_sec = (datetime.now() - start_time).total_seconds()
 		return temp_sec
 
-
 def main():
 
 #######################################################################
 ###                    LEITURA                                     ###    
 ######################################################################
-
-
 
 	N, PP, PR, FP, FR, HR, HP, D, R, C = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
 
@@ -87,9 +74,6 @@ def main():
 	rf_yp_sol = [0]*N
 	rf_yr_sol = [0]*N
 
-
-
-
 	SD = (np.zeros((N,N))).tolist()
 	SR = (np.zeros((N,N))).tolist()
 	for  i in range(N):
@@ -98,12 +82,8 @@ def main():
 		for j in range(i+1, N):
 			SD[i][j] = SD[i][j-1] + D[j]
 			SR[i][j] = SR[i][j-1] + R[j]
-
-
-			
 	
 	subset = gera.gera_particoes(N,tamanho_particao = tam_particao,num_par_fix= num_fix)
-
 
 	start_rf = timer()
 	for conj in subset:
@@ -123,13 +103,9 @@ def main():
 
 		temp_opt = timer(start_opt)
 
-
 	obj,bestbound,gap,temp,numnode,xp_sol,xr_sol,sp_sol,sr_sol, yp_sol,yr_sol,tmp = opt.clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_sp_sol,rf_sr_sol,rf_yp_sol,rf_yr_sol)
 	
 	temp_total = timer(start_rf)
-
-
-		
 	
 	if USE_FOP == True:
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_and_opt_table_mip.txt'),'a')
@@ -143,8 +119,6 @@ def main():
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+';'+str(tmp)+
 					'\n')
 		arquivo.close()
-
-
 
 	Sol_instance = pd.DataFrame()
 	Sol_instance['xp_sol'] = pd.Series(xp_sol)

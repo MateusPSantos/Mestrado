@@ -1,12 +1,9 @@
 
-
-
 import gurobipy as gp
 from gurobipy import GRB
 
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
-
 
 def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C):
 
@@ -55,7 +52,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 				yp[i].ub = yp_sol[i]
 				yr[i].lb = yr_sol[i]
 				yr[i].ub = yr_sol[i]
-
 		
 		model.update()
 
@@ -71,7 +67,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		model.addConstrs(xp[i] - yp[i]*min(C,SD[i][N-1]) <= 0 for i in range(N))
 		model.addConstrs(xr[i] - yr[i]*min(SR[0][i], SD[i][N-1]) <= 0 for i in range(N))
 		model.addConstrs(xp[i] + xr[i] <= C for i in range(N))
-
 		
 		#model.write(file_name+".lp")
 
@@ -82,10 +77,8 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		model.setParam(GRB.Param.Cuts, -1)
 		model.setParam(GRB.Param.Presolve,-1)
 
-
 		# Optimize model
 		model.optimize()
-
 
 		objval = model.ObjVal
 		bestbound = model.ObjBound
@@ -93,16 +86,12 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 		elapsed = model.Runtime
 		gap = model.MIPGap
 
-
-		
-	
 		xp_sol1 = [xp[i].X for i in range(N)]
 		xr_sol1 = [xr[i].X for i in range(N)]
 		sp_sol1 = [sp[i].X for i in range(N)]
 		sr_sol1 = [sr[i].X for i in range(N)]
 		yp_sol1 = [yp[i].X for i in range(N)]
 		yr_sol1 = [yr[i].X for i in range(N)]
-
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
