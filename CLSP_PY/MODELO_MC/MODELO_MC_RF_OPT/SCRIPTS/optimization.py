@@ -1,4 +1,3 @@
-
 import gurobipy as gp
 from gurobipy import GRB
 import numpy as np
@@ -7,23 +6,17 @@ import numpy as np
 ###                    PARAMETROS                                  ###    
 ######################################################################
 
-
-
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 cap = True
 
 lsdbar = 1
 
-
-
 #######################################################################
 ###                    MODELO			                           ###    
 ######################################################################
 
-
 def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol,wp_sol,wr_sol,vor_sol):
-
 
 	CP = [0]*N
 	CR = [0]*N
@@ -56,8 +49,6 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 		for j in range(i,N):
 			CR[i] -= HR[j]
 
-	
-
 	for i in range(N):
 		AUX = 0 
 		for j in range(i+1):
@@ -74,8 +65,6 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 		KR += HR[i]*AUX
 
 	K = KR - KP
-
-
 
 	try:
 
@@ -108,8 +97,6 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 		FO = 0.0
 		#FO = gp.quicksum(xp[i]*CP[i] for i in range(N)) + gp.quicksum(yp[i]*FP[i] for i in range(N)) \
 		#	+ gp.quicksum(xr[i]*CR[i] for i in range(N)) + gp.quicksum(yr[i]*FR[i] for i in range(N)) + K
-		
-		
 
 		for i in range(N):
 			FO+= xp[i]*CP[i]
@@ -152,7 +139,6 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 			for j in range(i,N):
 				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
 
-
 		for i in range(N):
 			for j in range(i,N):
 				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <=0)
@@ -187,9 +173,7 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 			xp[i] + xr[i] <= C for i in range(N)
 			)
 
-
 		# # Add constraints
-
 
 		#model.addConstrs(gp.quicksum(wp[j,i]+wr[j,i] for j in range(i+1)) >= D[i] for i in range(N))
 
@@ -217,17 +201,12 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 		#if lsdbar == 1:
 		#	model.addConstrs((gp.quicksum(xp[l] for l in range(i))+ gp.quicksum(yp[l]*sdl[l][j] for l in range(i,j+1))) >= sdl[0][j] for i in range(N) for j in range(i,N))
 
-	 
-
 		# Parameters 
-		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
-		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
-
-
-
+		model.setParam(GRB.Param.TimeLimit,MAX_CPU_TIME)
+		model.setParam(GRB.Param.MIPGap,EPSILON)
+		model.setParam(GRB.Param.Threads,1)
+		#model.setParam(GRB.Param.Cuts,-1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
@@ -236,10 +215,9 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 		if model.status == GRB.OPTIMAL:
 			tmp=1
 
-
 		print('Obj: %g' % model.ObjVal)
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
-	return model.ObjVal, model.ObjBound,model.MIPGap,model.Runtime, model.NodeCount,tmp
+	return model.ObjVal,model.ObjBound,model.MIPGap,model.Runtime,model.NodeCount,tmp

@@ -19,8 +19,6 @@ file_name = sys.argv[1]
 tam_particao = int(sys.argv[2]) # Tamanho das partições
 num_fix = int(sys.argv[3]) # número de variáveis que serão fixadas 
 
-
-
 USE_FOP = True# Se usa o fix and optimize
 
 #######################################################################
@@ -95,7 +93,7 @@ def main():
 
 	start_rf = timer()
 	for conj in subset:
-		rf_obj,rf_zsp_sol,rf_zsr_sol,rf_zr_sol,rf_l_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
+		rf_obj,rf_zsp_sol,rf_zsr_sol,rf_zr_sol,rf_l_sol,rf_yp_sol,rf_yr_sol,rf_bestbound,rf_numnode,rf_gap,rf_elapsed = rf.relax_fix(conj,rf_yp_sol,rf_yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 
 	temp_rf = timer(start_rf)
 
@@ -105,7 +103,6 @@ def main():
 
 	if USE_FOP == True:
 
-
 		fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed = rf_obj,rf_zsp_sol,rf_zsr_sol,rf_zr_sol,rf_l_sol,rf_yp_sol,rf_yr_sol, rf_bestbound, rf_numnode,rf_gap,rf_elapsed
 		start_opt = timer()
 		for conj in subset:
@@ -114,17 +111,14 @@ def main():
 			if fo_obj <= fo_melhor_obj:
 				fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed = fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed
 
-
 		temp_opt = timer(start_opt)
 
-	fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol, fo_bestbound, fo_numnode,fo_gap,fo_elapsed = fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol, fo_melhor_bestbound, fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed
-
+	fo_obj,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol,fo_bestbound,fo_numnode,fo_gap,fo_elapsed = fo_melhor_obj,fo_zsp_melhor_sol,fo_zsr_melhor_sol,fo_zr_melhor_sol,fo_l_melhor_sol,fo_yp_melhor_sol,fo_yr_melhor_sol,fo_melhor_bestbound,fo_melhor_numnode,fo_melhor_gap,fo_melhor_elapsed
 
 	obj,bestbound,gap,temp,numnode,tmp = opt.clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,fo_zsp_sol,fo_zsr_sol,fo_zr_sol,fo_l_sol,fo_yp_sol,fo_yr_sol)
 	
 	temp_total = timer(start_rf)
-		
-	
+			
 	if USE_FOP == True:
 
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_SP_relax_and_opt_mip_table.txt'),'a')
@@ -138,7 +132,6 @@ def main():
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+';'+str(tmp)+
 					'\n')
 		arquivo.close()
-
 
 if __name__== "__main__" :
 	main()

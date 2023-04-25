@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 import leitura as ler
@@ -11,12 +10,9 @@ import pandas as pd
 import sys
 from datetime import datetime, date
 
-
 #######################################################################
 ###                    PARAMETROS                                  ###    
 ######################################################################
-
-
 
 file_name = sys.argv[1]
 tam_particao = int(sys.argv[2]) # Tamanho das partições
@@ -24,14 +20,11 @@ num_fix = int(sys.argv[3]) # número de variáveis que serão fixadas
 
 USE_FOP = True# Se usa o fix and optimize
 
-
 #######################################################################
 ###                    DIRETÓRIOS                                   ###    
 #######################################################################
 
-
-
-RESULT_PATH   = Path('../RESULTADOS/')
+RESULT_PATH = Path('../RESULTADOS/')
 RESULT_IND_PATH = Path('../RESULTADOS_INDIVIDUAIS/')
 INSTANCE_PATH = Path('../../../../instances/c1sifa')
 
@@ -39,10 +32,7 @@ INSTANCE_PATH = Path('../../../../instances/c1sifa')
 ###                    VARIÁVEIS GLOBAIS                           ###    
 ######################################################################
 
-
 #Guarda solução
-
-
 
 objval = 0
 bestbound = 0
@@ -60,14 +50,11 @@ def timer(start_time=None):
 		temp_sec = (datetime.now() - start_time).total_seconds()
 		return temp_sec
 
-
 def main():
 
 #######################################################################
 ###                    LEITURA                                     ###    
 ######################################################################
-
-
 
 	N, PP, PR, FP, FR, HR, HP, D, R, C = ler.leitura_instance(os.path.join(INSTANCE_PATH,file_name))
 
@@ -88,9 +75,6 @@ def main():
 	rf_yp_sol = [0]*N
 	rf_yr_sol = [0]*N
 
-
-
-
 	SD = (np.zeros((N,N))).tolist()
 	SR = (np.zeros((N,N))).tolist()
 	for  i in range(N):
@@ -99,9 +83,6 @@ def main():
 		for j in range(i+1, N):
 			SD[i][j] = SD[i][j-1] + D[j]
 			SR[i][j] = SR[i][j-1] + R[j]
-
-
-			
 	
 	subset = gera.gera_particoes(N,tamanho_particao = tam_particao,num_par_fix= num_fix)
 
@@ -122,14 +103,9 @@ def main():
 
 		temp_opt = timer(start_opt)
 
-
 	temp_total = timer(start_rf)
 	obj,bestbound,gap,temp,numnode,tmp = opt.clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,rf_xp_sol,rf_xr_sol,rf_yp_sol,rf_yr_sol,rf_wp_sol,rf_wr_sol,rf_vor_sol)
-	
-
-
 		
-	
 	if USE_FOP == True:
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_MC_relax_and_opt_table_mip.txt'),'a')
 		arquivo.write(file_name+';'+str(round(obj,3))+';'+str(round(temp,3))+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+';'+str(round(bestbound,3))+\
@@ -142,8 +118,6 @@ def main():
 					';'+str(round(gap,3))+';'+str(round(temp,3))+';'+str(round(numnode,3))+';'+str(round(temp_total,3))+';'+str(tmp)+
 					'\n')
 		arquivo.close()
-
-
 
 	#Sol_instance = pd.DataFrame()
 	#Sol_instance['xp_sol'] = pd.Series(xp_sol)

@@ -1,4 +1,3 @@
-
 def gera_particoes(N,tamanho_particao=5,num_par_fix=2,semente = 5,indice_geracao = 1):
 	tam_jane = tamanho_particao - num_par_fix
 	subset = []

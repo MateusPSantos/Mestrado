@@ -128,11 +128,11 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_so
 			)
 
 		# Parameters 
-		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
-		model.setParam(GRB.Param.MIPGap, EPSILON)
+		model.setParam(GRB.Param.TimeLimit,MAX_CPU_TIME)
+		model.setParam(GRB.Param.MIPGap,EPSILON)
 		model.setParam(GRB.Param.Threads,1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		#model.setParam(GRB.Param.Cuts,-1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()

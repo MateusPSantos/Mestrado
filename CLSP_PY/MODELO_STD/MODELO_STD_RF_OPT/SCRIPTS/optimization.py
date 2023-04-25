@@ -57,9 +57,9 @@ def clsr_std(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,sp_sol,sr_so
 		# Parameters 
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		model.setParam(GRB.Param.Threads,1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()

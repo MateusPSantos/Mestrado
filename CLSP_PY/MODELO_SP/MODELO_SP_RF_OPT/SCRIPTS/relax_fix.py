@@ -1,6 +1,3 @@
-
-
-
 import gurobipy as gp
 from gurobipy import GRB
 import numpy as np
@@ -37,7 +34,6 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 	for i in range(N):
 		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
 	
-
 	try:
 
 		# Create a new model
@@ -142,11 +138,11 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 			)
 		
 		# Parameters 
-		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
-		model.setParam(GRB.Param.MIPGap, EPSILON)
+		model.setParam(GRB.Param.TimeLimit,MAX_CPU_TIME)
+		model.setParam(GRB.Param.MIPGap,EPSILON)
 		model.setParam(GRB.Param.Threads,1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
+		#model.setParam(GRB.Param.Cuts,-1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
@@ -173,4 +169,4 @@ def relax_fix(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C)
 	#except AttributeError:
 	#	print('Encountered an attribute error')
 
-	return model.ObjVal, zsp_sol1,zsr_sol1,zr_sol1, l_sol1, yp_sol1,yr_sol1, bestbound, numnode, gap,elapsed
+	return model.ObjVal,zsp_sol1,zsr_sol1,zr_sol1,l_sol1,yp_sol1,yr_sol1,bestbound,numnode,gap,elapsed

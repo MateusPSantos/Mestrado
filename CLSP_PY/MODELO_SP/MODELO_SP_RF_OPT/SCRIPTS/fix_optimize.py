@@ -6,7 +6,6 @@ import numpy as np
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 
-
 def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_sol):
 
 	zsp_sol1 = (np.zeros((N,N))).tolist()
@@ -36,8 +35,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 	for i in range(N):
 		CL[i] = sum(HR[j]*SR[i][j] for j in range(i,N))
 	
-
-
 	try:
 
 		# Create a new model
@@ -51,9 +48,7 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
 		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
 		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
-
-
-	  
+  
 		for i in range(N):
 			if i not in particoes:
 				yp[i].lb    = yp_sol[i]
@@ -70,11 +65,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 				zsr[i,j].start = zsr_sol[i][j]
 				zr[i,j].start = zr_sol[i][j]
 
-				
-				
-
-
-		
 		model.update()
 
 		# # Set objective
@@ -141,28 +131,21 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 			gp.quicksum(SD[t][k]*zsr[t,k] for k in range(t,N)) <= C for t in range(N)
 			)
 	 
-
 		# Parameters 
-		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
-		model.setParam(GRB.Param.MIPGap, EPSILON)
+		model.setParam(GRB.Param.TimeLimit,MAX_CPU_TIME)
+		model.setParam(GRB.Param.MIPGap,EPSILON)
 		model.setParam(GRB.Param.Threads,1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
-
-
-
+		#model.setParam(GRB.Param.Cuts,-1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
-
-
 
 		objval = model.ObjVal
 		bestbound = model.ObjBound
 		numnode = model.NodeCount
 		elapsed = model.Runtime
 		gap = model.MIPGap
-
 
 		for i in range(N):
 			for j in range(i,N):
@@ -174,11 +157,10 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 		yp_sol1 = [yp[i].X for i in range(N)]
 		yr_sol1 = [yr[i].X for i in range(N)]
 
-
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
 	#except AttributeError:
 	#   print('Encountered an attribute error')
 
-	return model.ObjVal, zsp_sol1,zsr_sol1,zr_sol1, l_sol1, yp_sol1,yr_sol1, bestbound, numnode, gap,elapsed
+	return model.ObjVal,zsp_sol1,zsr_sol1,zr_sol1,l_sol1,yp_sol1,yr_sol1,bestbound,numnode,gap,elapsed

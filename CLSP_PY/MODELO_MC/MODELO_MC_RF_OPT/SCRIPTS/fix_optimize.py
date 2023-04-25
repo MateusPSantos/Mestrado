@@ -2,10 +2,8 @@
 import gurobipy as gp
 from gurobipy import GRB
 
-
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
-
 
 def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,wp_sol,wr_sol,vor_sol):
 
@@ -27,8 +25,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 		for j in range(i,N):
 			CR[i] -= HR[j]
 
-
-
 	for i in range(N):
 		AUX = 0 
 		for j in range(i+1):
@@ -46,10 +42,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 
 	K = KR - KP
 
-	
-	
-
-
 	try:
 
 		# Create a new model
@@ -64,7 +56,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 		xr    = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
 		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
 		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
-
 	  
 		for i in range(N):
 			if i not in particoes:
@@ -82,8 +73,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 				wp[i,j].start  = wp_sol[i][j]
 				wr[i,j].start  = wr_sol[i][j]
 				vor[i,j].start = vor_sol[i][j]
-
-
 		
 		model.update()
 		# # Set objective
@@ -92,8 +81,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 		#FO = gp.quicksum(xp[i]*CP[i] for i in range(N)) + gp.quicksum(yp[i]*FP[i] for i in range(N)) \
 		#   + gp.quicksum(xr[i]*CR[i] for i in range(N)) + gp.quicksum(yr[i]*FR[i] for i in range(N)) + K
 		
-		
-
 		for i in range(N):
 			FO+= xp[i]*CP[i]
 
@@ -107,7 +94,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 			FO+= yr[i]*FR[i]
 
 		FO+= K
-
 
 		model.setObjective(FO, sense = GRB.MINIMIZE)
 		# # Add constraints
@@ -136,7 +122,6 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 		for i in range(N):
 			for j in range(i,N):
 				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
-
 
 		for i in range(N):
 			for j in range(i,N):
@@ -172,13 +157,11 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 			xp[i] + xr[i] <= C for i in range(N)
 			)
 		# Parameters 
-		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
-		model.setParam(GRB.Param.MIPGap, EPSILON)
-		model.setParam(GRB.Param.Threads,3)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve,-1)
-
-
+		model.setParam(GRB.Param.TimeLimit,MAX_CPU_TIME)
+		model.setParam(GRB.Param.MIPGap,EPSILON)
+		model.setParam(GRB.Param.Threads,1)
+		#model.setParam(GRB.Param.Cuts,-1)
+		#model.setParam(GRB.Param.Presolve,-1)
 
 		# Optimize model
 		model.optimize()
@@ -193,12 +176,9 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 		yp_sol  = [yp[i].X for i in range(N)]
 		yr_sol  = [yr[i].X for i in range(N)]
 
-
-
-
 		print('Obj: %g' % model.ObjVal)
 
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
-	return model.ObjVal, xp_sol,xr_sol,wp_sol,wr_sol,vor_sol, yp_sol,yr_sol, model.ObjBound, model.NodeCount,model.MIPGap,model.Runtime
+	return model.ObjVal,xp_sol,xr_sol,wp_sol,wr_sol,vor_sol,yp_sol,yr_sol,model.ObjBound,model.NodeCount,model.MIPGap,model.Runtime
