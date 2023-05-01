@@ -108,15 +108,22 @@ def main():
 	
 	if USE_FOP == True:
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_MC_relax_and_opt_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+';'+str(round(rf_obj,3))+';'+str(round(temp_opt,3))+\
-					';'+str(round(temp_total,3))+
-					'\n')
+		arquivo.write(file_name+';'
+		+str(round(rf_obj1,3))+';'
+		+str(round(temp_rf,3))+';'
+		+str(round(rf_obj,3))+';'
+		+str(round(temp_opt,3))+';'
+		+str(round(temp_total,3))+'\n'
+		)
 		arquivo.close()
 	else :
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_MC_relax_fix_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(rf_obj1,3))+';'+str(round(temp_rf,3))+\
-					';'+str(round(temp,3))+';'+str(round(temp_total,3))+
-					'\n')
+		arquivo.write(file_name+';'
+		+str(round(rf_obj1,3))+';'
+		+str(round(temp_rf,3))+';'
+		+str(round(temp,3))+';'
+		+str(round(temp_total,3))+'\n'
+		)
 		arquivo.close()
 
 	#Sol_instance = pd.DataFrame()

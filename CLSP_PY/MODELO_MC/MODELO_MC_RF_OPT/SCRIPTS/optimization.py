@@ -16,7 +16,7 @@ lsdbar = 1
 ###                    MODELO			                           ###    
 ######################################################################
 
-def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol,wp_sol,wr_sol,vor_sol):
+def clsr_mc(N,PP,PR,FP,FR,HR,HP,D,R,SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol,wp_sol,wr_sol,vor_sol):
 
 	CP = [0]*N
 	CR = [0]*N
@@ -73,13 +73,13 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 
 		# Create variables
 		
-		wp   = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wp")
-		wr 	 = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wr")
-		vor  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="vor")
-		xp    = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xp")
-		xr    = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
-		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
-		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
+		wp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wp")
+		wr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="wr")
+		vor = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="vor")
+		xp = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xp")
+		xr = model.addVars(list(range(N)), lb = 0.0, ub = float('inf'), vtype=GRB.CONTINUOUS, name="xr")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
 
 		for i in range(N):
 			xp[i].start = xp_sol[i]
@@ -110,7 +110,7 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 		for i in range(N):
 			FO+= yr[i]*FR[i]
 
-		FO+= K
+		FO += K
 		
 		model.setObjective(FO, sense = GRB.MINIMIZE)
 
@@ -137,11 +137,11 @@ def clsr_mc(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,xp_sol,xr_sol,yp_sol,yr_sol
 
 		for i in range(N):
 			for j in range(i,N):
-				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
+				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <= 0)
 
 		for i in range(N):
 			for j in range(i,N):
-				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <=0)
+				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <= 0)
 
 		for i in range(N):
 			for j in range(i,N):

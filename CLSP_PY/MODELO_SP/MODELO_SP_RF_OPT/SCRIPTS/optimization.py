@@ -15,7 +15,7 @@ EPSILON = 0.000001
 ###                    MODELO			                           ###    
 ######################################################################
 
-def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_sol,yp_sol,yr_sol):
+def clsr_sp(N,PP,PR,FP,FR,HR,HP,D,R,SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_sol,yp_sol,yr_sol):
 
 	CSP = (np.zeros((N,N))).tolist()
 	CSR = (np.zeros((N,N))).tolist()
@@ -24,7 +24,7 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_so
 
 	for i in range(N):
 		for j in range(i,N):
-			CR[i][j]  = sum(HR[t]*SR[i][t] for t in range(i,j))
+			CR[i][j] = sum(HR[t]*SR[i][t] for t in range(i,j))
 			CSP[i][j] = PP[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
 			CSR[i][j] = PR[i] * SD[i][j] + sum(HP[t]*SD[t+1][j] for t in range(i,j))
 
@@ -40,10 +40,10 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_so
 		
 		zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
 		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
-		zr  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
-		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
-		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
-		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
+		zr = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
+		l = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
 
 		for i in range(N):
 			l[i].start = l_sol[i]
@@ -70,7 +70,7 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_so
 			FO += yp[i]*FP[i] + yr[i]*FR[i] + l[i]*CL[i] 
 			
 			for j in range(i,N):
-				FO+=zsp[i,j]*CSP[i][j] + zsr[i,j]*CSR[i][j]+zr[i,j]*CR[i][j] 
+				FO += zsp[i,j]*CSP[i][j] + zsr[i,j]*CSR[i][j]+zr[i,j]*CR[i][j] 
 
 		model.setObjective(FO, sense = GRB.MINIMIZE)
 
@@ -144,4 +144,4 @@ def clsr_sp(N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_so
 	except gp.GurobiError as e:
 		print('Error code ' + str(e.errno) + ': ' + str(e))
 
-	return model.ObjVal, model.ObjBound,model.MIPGap,model.Runtime, model.NodeCount,tmp
+	return model.ObjVal,model.ObjBound,model.MIPGap,model.Runtime,model.NodeCount,tmp

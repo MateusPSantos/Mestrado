@@ -6,7 +6,7 @@ import numpy as np
 MAX_CPU_TIME = 3600.0
 EPSILON = 0.000001
 
-def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_sol):
+def fix_and_optimize(particoes,yp_sol,yr_sol,N,PP,PR,FP,FR,HR,HP,D,R,SD,SR,C,zsp_sol,zsr_sol,zr_sol,l_sol):
 
 	zsp_sol1 = (np.zeros((N,N))).tolist()
 	zsr_sol1 = (np.zeros((N,N))).tolist()
@@ -44,17 +44,17 @@ def fix_and_optimize(particoes,yp_sol ,yr_sol,N, PP, PR, FP, FR, HR, HP, D, R, S
 	
 		zsp = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sp")
 		zsr = model.addVars([(i,j) for i in range(N) for j in range(i,N)], lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_sr")
-		zr  = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
-		l    = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
-		yp   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
-		yr   = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
+		zr = model.addVars([(i,j) for i in range(N) for j in range(i,N)],lb =0.0, ub = float('inf'),vtype=GRB.CONTINUOUS, name="z_r")
+		l = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.CONTINUOUS, name="l")
+		yp = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yp")
+		yr = model.addVars(list(range(N)), lb = 0.0, ub = 1.0, vtype=GRB.BINARY, name="yr")
   
 		for i in range(N):
 			if i not in particoes:
-				yp[i].lb    = yp_sol[i]
-				yp[i].ub    = yp_sol[i]
-				yr[i].lb    = yr_sol[i]
-				yr[i].ub    = yr_sol[i]
+				yp[i].lb = yp_sol[i]
+				yp[i].ub = yp_sol[i]
+				yr[i].lb = yr_sol[i]
+				yr[i].ub = yr_sol[i]
 			else:
 				yp[i].start = yp_sol[i]
 				yr[i].start = yr_sol[i]

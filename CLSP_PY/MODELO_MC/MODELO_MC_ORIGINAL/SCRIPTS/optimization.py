@@ -131,12 +131,12 @@ def clsr_mc_mip(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
 
 		for i in range(N):
 			for j in range(i,N):
-				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <=0)
+				model.addConstr(wp[i,j] + yp[i]*(-D[j]) <= 0)
 
 
 		for i in range(N):
 			for j in range(i,N):
-				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <=0)
+				model.addConstr(wr[i,j] + yr[i]*(-min(SR[0][i],D[j])) <= 0)
 
 		for i in range(N):
 			for j in range(i,N):
@@ -175,8 +175,8 @@ def clsr_mc_mip(N, PR, PP, FR, FP, HR, HP, D, R, SD, SR, C):
 		model.setParam(GRB.Param.TimeLimit, MAX_CPU_TIME)
 		model.setParam(GRB.Param.MIPGap, EPSILON)
 		model.setParam(GRB.Param.Threads, 1)
-		model.setParam(GRB.Param.Cuts, -1)
-		model.setParam(GRB.Param.Presolve, -1)
+		#model.setParam(GRB.Param.Cuts, -1)
+		#model.setParam(GRB.Param.Presolve, -1)
 
 		# Optimize model
 		model.optimize()

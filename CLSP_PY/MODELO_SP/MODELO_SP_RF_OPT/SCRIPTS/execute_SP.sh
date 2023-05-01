@@ -1,7 +1,7 @@
 #!/bin/bash
 #52 periodos, 108 instancias
 
-fo=mc
+fo=sp
 
 for id in {1..108} #$(seq 1)
 do

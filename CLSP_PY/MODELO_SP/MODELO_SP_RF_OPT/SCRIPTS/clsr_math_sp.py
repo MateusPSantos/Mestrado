@@ -117,15 +117,22 @@ def main():
 	if USE_FOP == True:
 
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_SP_relax_and_opt_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(rf_obj,3))+';'+str(round(temp_rf,3))+';'+str(round(fo_obj,3))+';'+str(round(temp_opt,3))+';'+\
-					';'+str(round(fo_melhor_numnode,3))+';'+str(round(temp_total,3))+
-					'\n')
+		arquivo.write(file_name+';'
+		+str(round(rf_obj,3))+';'
+		+str(round(temp_rf,3))+';'
+		+str(round(fo_obj,3))+';'
+		+str(round(temp_opt,3))+';'
+		+str(round(temp_total,3))+'\n'
+		)
 		arquivo.close()
 	else :
 		arquivo = open(os.path.join(RESULT_PATH,'clsr_STD_relax_fix_table.txt'),'a')
-		arquivo.write(file_name+';'+str(round(rf_obj,3))+\
-					';'+str(round(temp_rf,3))+';'+str(round(rf_numnode,3))+';'+str(round(temp_total,3))+
-					'\n')
+		arquivo.write(file_name+';'
+		+str(round(rf_obj,3))+';'
+		+str(round(temp_rf,3))+';'
+		+str(round(rf_numnode,3))+';'
+		+str(round(temp_total,3))+'\n'
+		)
 		arquivo.close()
 
 if __name__== "__main__" :
